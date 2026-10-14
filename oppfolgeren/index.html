@@ -1,0 +1,747 @@
+<title>Oppfølgeren</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: én smal arbeidskolonne; faner øverst, sammendrag før detaljer, oppgaver som rader med statuschips. */
+:root {
+  --bg: #F3F5F4;
+  --surface: #FFFFFF;
+  --ink: #16211D;
+  --muted: #5B6863;
+  --line: #D9E0DC;
+  --accent: #22684F;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E1EEE8;
+  --late: #B3362B;
+  --late-soft: #F8E3E0;
+  --today: #8F5C00;
+  --today-soft: #F7EBD3;
+  --wait: #3F5C8C;
+  --wait-soft: #E3E9F4;
+  --focus: #22684F;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1513; --surface: #18201D; --ink: #E6ECE9; --muted: #94A39D; --line: #2A3531;
+    --accent: #5DBB95; --accent-ink: #0D1A14; --accent-soft: #1D3329;
+    --late: #F08A7E; --late-soft: #3A1F1C; --today: #E4B25A; --today-soft: #352A14;
+    --wait: #93ADDB; --wait-soft: #1F2A3D; --focus: #5DBB95;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1513; --surface: #18201D; --ink: #E6ECE9; --muted: #94A39D; --line: #2A3531;
+  --accent: #5DBB95; --accent-ink: #0D1A14; --accent-soft: #1D3329;
+  --late: #F08A7E; --late-soft: #3A1F1C; --today: #E4B25A; --today-soft: #352A14;
+  --wait: #93ADDB; --wait-soft: #1F2A3D; --focus: #5DBB95;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+}
+.wrap { max-width: 760px; margin: 0 auto; display: grid; gap: 20px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: 1.9rem; line-height: 1.1; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.05rem; }
+p { margin: 0; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+
+header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 8px 16px; }
+.top .date { font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); }
+.badge { font-size: 0.8rem; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); background: var(--surface); }
+.badge[data-mode="db"] { color: var(--accent); border-color: var(--accent); }
+
+nav.tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+nav.tabs button { border: 0; background: transparent; padding: 10px 8px; border-radius: 8px; font: 600 0.95rem var(--font-body); color: var(--muted); cursor: pointer; }
+nav.tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+nav.tabs .count { font-family: var(--font-mono); font-weight: 500; font-size: 0.8rem; opacity: 0.85; }
+
+section.panel { display: grid; gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.row.between { justify-content: space-between; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 520px) { .grid2 { grid-template-columns: 1fr; } }
+
+label { display: grid; gap: 4px; font-size: 0.875rem; font-weight: 600; color: var(--muted); }
+input[type="text"], input[type="date"], textarea, select {
+  font: inherit; font-weight: 400; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; min-width: 0;
+}
+textarea { resize: vertical; min-height: 9rem; line-height: 1.45; }
+input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+button.btn { font: 600 0.95rem var(--font-body); border-radius: 8px; padding: 9px 14px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+button.btn:hover { border-color: var(--muted); }
+button.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+button.btn.primary:hover { filter: brightness(1.08); }
+button.btn.ghost { border-color: transparent; background: transparent; color: var(--muted); padding: 6px 8px; }
+button.btn.ghost:hover { color: var(--ink); }
+button.btn:disabled { opacity: 0.55; cursor: progress; }
+.ai-mark { font-family: var(--font-mono); font-size: 0.75rem; margin-left: 4px; opacity: 0.8; }
+
+.notice { font-size: 0.875rem; padding: 10px 12px; border-radius: 8px; background: var(--wait-soft); color: var(--ink); border-left: 3px solid var(--wait); }
+.notice.warn { background: var(--today-soft); border-left-color: var(--today); }
+.notice.err { background: var(--late-soft); border-left-color: var(--late); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.stat { display: grid; gap: 0; padding: 10px 14px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); min-width: 7.5rem; flex: 1; }
+.stat b { font-family: var(--font-mono); font-size: 1.4rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.stat.late b { color: var(--late); }
+.stat.today b { color: var(--today); }
+.stat.wait b { color: var(--wait); }
+
+.filters { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.filters button { flex: none; font: 600 0.85rem var(--font-body); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
+.filters button[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); }
+
+ul.tasks { list-style: none; margin: 0; padding: 0; display: grid; }
+ul.tasks li { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; align-items: start; padding: 12px 0; border-top: 1px solid var(--line); }
+ul.tasks li:first-child { border-top: 0; }
+ul.tasks li.done .t-text { text-decoration: line-through; color: var(--muted); }
+.t-check { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--accent); cursor: pointer; }
+.t-body { display: grid; gap: 6px; min-width: 0; }
+.t-text { overflow-wrap: anywhere; }
+.t-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pill { font-size: 0.78rem; line-height: 1; padding: 5px 8px; border-radius: 999px; background: var(--bg); color: var(--muted); border: 1px solid var(--line); white-space: nowrap; }
+.pill.mono { font-size: 0.75rem; }
+.pill.late { background: var(--late-soft); color: var(--late); border-color: transparent; }
+.pill.today { background: var(--today-soft); color: var(--today); border-color: transparent; }
+.pill.wait { background: var(--wait-soft); color: var(--wait); border-color: transparent; }
+button.pill { cursor: pointer; font-family: var(--font-body); }
+.pill.prio-high { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.pill.prio-low { opacity: 0.7; }
+.t-actions { display: flex; gap: 2px; }
+input.t-date { font-family: var(--font-mono); font-size: 0.78rem; padding: 3px 6px; width: auto; background: transparent; }
+
+.quick { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.empty { text-align: left; display: grid; gap: 10px; padding: 8px 0; }
+
+ol.pick { margin: 0; padding-left: 1.4rem; display: grid; gap: 10px; }
+ol.pick li::marker { font-family: var(--font-mono); color: var(--accent); }
+.pick .why { color: var(--muted); font-size: 0.9rem; }
+
+.out { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px; font-size: 0.95rem; }
+
+.ap { display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; align-items: start; padding: 10px 0; border-top: 1px solid var(--line); }
+.ap:first-of-type { border-top: 0; }
+.ap .fields { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; min-width: 0; }
+@media (max-width: 560px) { .ap .fields { grid-template-columns: 1fr 1fr; } .ap .fields .wide { grid-column: 1 / -1; } }
+ul.plain { margin: 0; padding-left: 1.2rem; }
+
+details.meeting { border-top: 1px solid var(--line); padding: 10px 0; }
+details.meeting:first-of-type { border-top: 0; }
+details.meeting summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+details.meeting summary .mono { color: var(--muted); font-size: 0.85rem; }
+details.meeting .body { display: grid; gap: 10px; padding-top: 10px; }
+
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; font-size: 0.9rem; max-width: calc(100% - 32px); z-index: 10; }
+@media (prefers-reduced-motion: no-preference) { .toast { animation: rise .18s ease-out; } @keyframes rise { from { transform: translate(-50%, 8px); opacity: 0; } } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Oppfølgeren</h1>
+      <p class="date" id="today-label"></p>
+    </div>
+    <span class="badge" id="mode-badge" data-mode="local">Lagres i denne nettleseren</span>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Visninger">
+    <button role="tab" id="tab-idag" data-tab="idag">I dag <span class="count" id="count-idag"></span></button>
+    <button role="tab" id="tab-oppgaver" data-tab="oppgaver">Oppgaver <span class="count" id="count-oppgaver"></span></button>
+    <button role="tab" id="tab-mote" data-tab="mote">Møte</button>
+  </nav>
+
+  <main id="view"></main>
+</div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ---------- Hjelpere ----------
+  const $ = (s, r = document) => r.querySelector(s);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const uid = (p) => p + "_" + (crypto.randomUUID ? crypto.randomUUID().slice(0, 8) : Math.random().toString(36).slice(2, 10)) + Date.now().toString(36).slice(-4);
+  const pad = (n) => String(n).padStart(2, "0");
+  const iso = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  const parseIso = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+  const DAYS = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
+  const MONTHS = ["januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember"];
+  const fmtNo = (s) => { if (!s) return ""; const d = parseIso(s); return pad(d.getDate()) + "." + pad(d.getMonth() + 1) + "." + d.getFullYear(); };
+  const fmtShort = (s) => { const d = parseIso(s); return DAYS[d.getDay()].slice(0, 3) + ". " + d.getDate() + "." + (d.getMonth() + 1) + "."; };
+  function isoWeek(d) {
+    const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const day = t.getUTCDay() || 7;
+    t.setUTCDate(t.getUTCDate() + 4 - day);
+    const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+    return Math.ceil(((t - y0) / 86400000 + 1) / 7);
+  }
+  const now = new Date();
+  const TODAY = iso(now);
+  const monday = new Date(now); monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+  const WEEK_START = iso(monday), WEEK_END = iso(sunday);
+
+  function dueState(due) {
+    if (!due) return "";
+    if (due < TODAY) return "late";
+    if (due === TODAY) return "today";
+    if (due <= WEEK_END) return "week";
+    return "";
+  }
+  function dueLabel(due) {
+    const s = dueState(due);
+    if (s === "late") { const days = Math.round((parseIso(TODAY) - parseIso(due)) / 86400000); return days === 1 ? "1 dag over frist" : days + " dager over frist"; }
+    if (s === "today") return "Frist i dag";
+    return "Frist " + fmtShort(due);
+  }
+
+  let toastTimer;
+  function toast(msg) {
+    const t = $("#toast"); t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.hidden = true), 3200);
+  }
+  async function copy(text, btn) {
+    try { await navigator.clipboard.writeText(text); toast("Kopiert"); }
+    catch {
+      const ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      let ok = false; try { ok = document.execCommand("copy"); } catch {}
+      ta.remove();
+      toast(ok ? "Kopiert" : "Kunne ikke kopiere automatisk. Marker teksten og kopier manuelt.");
+    }
+  }
+  const lsGet = (k, fb) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; } catch { return fb; } };
+  const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+
+  // ---------- Tilstand og lagring ----------
+  const LS_ITEMS = "oppfolgeren.items.v1";
+  const LS_UI = "oppfolgeren.ui.v1";
+  const ui = Object.assign({ tab: "idag", filter: "open" }, lsGet(LS_UI, {}));
+  const state = {
+    items: lsGet(LS_ITEMS, {}),
+    mode: "local",       // "local" | "connecting" | "db"
+    ai: null,            // sample-namespace, eller null
+    aiChecked: false,
+    draft: null,         // referatutkast fra KI
+    picks: lsGet("oppfolgeren.picks." + TODAY, null),
+    weekly: "",
+    busy: {},
+  };
+  let col = null;
+
+  const tasks = () => Object.values(state.items).filter((i) => i.kind === "task");
+  const meetings = () => Object.values(state.items).filter((i) => i.kind === "meeting").sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || 0) - (a.createdAt || 0));
+  const myName = () => (state.items.settings && state.items.settings.name) || "";
+  function isMine(t) {
+    const o = (t.owner || "").trim().toLowerCase();
+    if (!o || o === "meg" || o === "jeg") return true;
+    const me = myName().trim().toLowerCase();
+    return !!me && (o === me || o.split(/[\s,]+/).includes(me) || me.split(/\s+/)[0] === o);
+  }
+  const prioRank = { high: 0, normal: 1, low: 2 };
+  const byUrgency = (a, b) => (a.due || "9999").localeCompare(b.due || "9999") || prioRank[a.priority || "normal"] - prioRank[b.priority || "normal"] || (a.createdAt || 0) - (b.createdAt || 0);
+
+  function saveLocal() { if (state.mode !== "db") lsSet(LS_ITEMS, state.items); }
+  async function put(item) {
+    state.items[item.id] = item;
+    render();
+    if (state.mode === "db" && col) {
+      try { await col.doc(item.id).set(item); }
+      catch (e) { toast("Lagring feilet: " + (e && e.message ? e.message : "ukjent feil") + ". Prøv igjen."); }
+    } else saveLocal();
+  }
+  async function putMany(items) {
+    items.forEach((i) => (state.items[i.id] = i));
+    render();
+    if (state.mode === "db" && col) {
+      for (const i of items) { try { await col.doc(i.id).set(i); } catch (e) { toast("Lagring feilet for én oppgave. Prøv igjen."); } }
+    } else saveLocal();
+  }
+  async function remove(id) {
+    delete state.items[id];
+    render();
+    if (state.mode === "db" && col) {
+      try { await col.doc(id).delete(); } catch { toast("Sletting feilet. Prøv igjen."); }
+    } else saveLocal();
+  }
+  function setUi(patch) { Object.assign(ui, patch); lsSet(LS_UI, { tab: ui.tab, filter: ui.filter }); render(); }
+
+  // ---------- KI ----------
+  function aiError(e) {
+    const code = e && e.code;
+    if (code === "not_granted" || code === "sampling_disabled" || code === "not_declared") { state.ai = null; render(); return "KI-hjelp er ikke tilgjengelig her. Du kan fortsatt registrere alt manuelt."; }
+    if (code === "rate_limited") return "Mange forespørsler på kort tid. Vent et minutt og prøv igjen.";
+    if (code === "prompt_too_large") return "Teksten er for lang. Del notatene i to møter, eller kort dem ned.";
+    if (code === "cancelled") return "Avbrutt.";
+    return "KI-kallet feilet" + (e && e.message ? ": " + e.message : "") + ".";
+  }
+  const todayLine = () => "Dagens dato er " + DAYS[now.getDay()] + " " + TODAY + " (uke " + isoWeek(now) + ").";
+
+  async function makeSummary(form) {
+    const me = myName();
+    const prompt = [
+      "Du er en erfaren møtesekretær i en norsk kommune. Lag et kort, saklig referat på norsk bokmål av møtenotatene under.",
+      todayLine(),
+      "Gjør relative frister («fredag», «neste uke», «innen månedsslutt») om til datoer på formatet ÅÅÅÅ-MM-DD. Mangler frist, bruk null.",
+      "Brukeren som skrev notatene heter «" + (me || "meg") + "». Når notatene sier «jeg», «meg» eller «vi (meg)», sett ansvarlig til «" + (me || "meg") + "».",
+      "Ikke legg til innhold som ikke står i notatene. Skriv aksjonspunkter som korte setninger som starter med et verb.",
+      'Svar bare med JSON i denne formen: {"referat": "3–8 setninger", "beslutninger": ["..."], "aksjonspunkter": [{"tekst": "...", "ansvarlig": "navn eller null", "frist": "ÅÅÅÅ-MM-DD eller null"}]}',
+      "",
+      "Møte: " + (form.title || "(uten tittel)"),
+      "Dato: " + (form.date || TODAY),
+      "Deltakere: " + (form.participants || "(ikke oppgitt)"),
+      "Notater:",
+      '"""', form.notes, '"""',
+    ].join("\n");
+    return state.ai.json(prompt, { modelTier: "default" });
+  }
+
+  // ---------- Visninger ----------
+  function taskRow(t, opts = {}) {
+    const ds = dueState(t.due);
+    const mine = isMine(t);
+    const prio = t.priority || "normal";
+    const prioText = { high: "Høy", normal: "Normal", low: "Lav" }[prio];
+    const meeting = t.meetingId && state.items[t.meetingId];
+    return `<li class="${t.status === "done" ? "done" : ""}" data-id="${esc(t.id)}">
+      <input type="checkbox" class="t-check" data-action="toggle" ${t.status === "done" ? "checked" : ""} aria-label="Merk som ferdig">
+      <div class="t-body">
+        <span class="t-text">${esc(t.text)}</span>
+        <div class="t-meta">
+          ${t.due && t.status !== "done" ? `<span class="pill ${ds === "late" ? "late" : ds === "today" ? "today" : ""}">${esc(dueLabel(t.due))}</span>` : ""}
+          ${!mine ? `<span class="pill wait">Venter på ${esc(t.owner)}</span>` : ""}
+          ${mine && t.owner && !/^(meg|jeg)$/i.test(t.owner) ? `<span class="pill">${esc(t.owner)}</span>` : ""}
+          <button class="pill prio-${prio}" data-action="prio" title="Bytt prioritet">${prioText}</button>
+          ${meeting && !opts.hideMeeting ? `<span class="pill">Fra: ${esc(meeting.title || "møte")}</span>` : ""}
+          <input type="date" class="t-date" data-action="due" value="${esc(t.due || "")}" aria-label="Frist">
+        </div>
+      </div>
+      <div class="t-actions"><button class="btn ghost small" data-action="delete" data-confirm="0">Slett</button></div>
+    </li>`;
+  }
+
+  function aiButton(action, label, extra = "") {
+    if (!state.ai) return "";
+    const busy = state.busy[action];
+    return `<button class="btn primary" data-action="${action}" ${busy ? "disabled" : ""} ${extra}>${busy ? "Jobber …" : esc(label)}<span class="ai-mark">KI</span></button>`;
+  }
+  function aiNote() {
+    if (state.ai) return "";
+    if (!state.aiChecked) return `<p class="small muted">Kobler til KI-hjelp …</p>`;
+    return `<p class="notice small">KI-hjelp er ikke tilgjengelig i denne visningen. Åpne appen på claude.ai for å bruke den. Alt annet fungerer.</p>`;
+  }
+
+  function viewToday() {
+    const open = tasks().filter((t) => t.status !== "done");
+    const late = open.filter((t) => dueState(t.due) === "late");
+    const today = open.filter((t) => dueState(t.due) === "today");
+    const week = open.filter((t) => dueState(t.due) === "week");
+    const waiting = open.filter((t) => !isMine(t));
+    const focus = [...late, ...today, ...week].filter(isMine).sort(byUrgency);
+    const doneWeek = tasks().filter((t) => t.status === "done" && t.doneAt && t.doneAt >= WEEK_START);
+
+    if (!tasks().length) {
+      return `<section class="panel">
+        <div class="card empty">
+          <h2>Ingen oppgaver ennå</h2>
+          <p class="muted">Her ser du hver morgen hva som er forfalt, hva som har frist i dag og resten av uka, og hva du venter på fra andre.</p>
+          <p class="muted">Start med å lime inn notater fra et møte, så lager appen referat og aksjonspunkter. Eller skriv inn en oppgave direkte.</p>
+          <div class="row"><button class="btn primary" data-goto="mote">Registrer et møte</button><button class="btn" data-goto="oppgaver">Legg til oppgave</button></div>
+        </div>
+        ${settingsCard()}
+      </section>`;
+    }
+
+    const picks = state.picks && state.picks.valg ? state.picks.valg.map((p) => ({ ...p, task: state.items[p.id] })).filter((p) => p.task) : [];
+    return `<section class="panel">
+      <div class="chips">
+        <div class="stat late"><b>${late.length}</b><span>Forfalt</span></div>
+        <div class="stat today"><b>${today.length}</b><span>Frist i dag</span></div>
+        <div class="stat"><b>${week.length}</b><span>Resten av uka</span></div>
+        <div class="stat wait"><b>${waiting.length}</b><span>Venter på andre</span></div>
+      </div>
+
+      <div class="card">
+        <div class="row between"><h2>Dagens tre viktigste</h2>${aiButton("pick", picks.length ? "Foreslå på nytt" : "Foreslå")}</div>
+        ${picks.length ? `<ol class="pick">${picks.map((p) => `<li><div>${esc(p.task.text)}${p.task.status === "done" ? ' <span class="pill">Ferdig</span>' : ""}</div><div class="why">${esc(p.grunn || "")}</div></li>`).join("")}</ol>${state.picks.kommentar ? `<p class="small muted">${esc(state.picks.kommentar)}</p>` : ""}`
+          : `<p class="muted small">Claude ser på frister, prioritet og hva andre venter på, og foreslår hvor du bør starte.</p>`}
+        ${aiNote()}
+      </div>
+
+      <div class="card">
+        <h2>Dine frister</h2>
+        ${focus.length ? `<ul class="tasks">${focus.map((t) => taskRow(t)).join("")}</ul>` : `<p class="muted">Ingen av dine oppgaver har frist denne uka.</p>`}
+      </div>
+
+      ${waiting.length ? `<div class="card"><h2>Venter på andre</h2><ul class="tasks">${waiting.sort(byUrgency).map((t) => taskRow(t)).join("")}</ul></div>` : ""}
+
+      <div class="card">
+        <div class="row between"><h2>Ukeoppsummering</h2>${aiButton("weekly", state.weekly ? "Lag på nytt" : "Lag oppsummering")}</div>
+        <p class="small muted">Uke ${isoWeek(now)}: ${doneWeek.length} fullført, ${open.length} åpne, ${meetings().filter((m) => m.date >= WEEK_START && m.date <= WEEK_END).length} møter. Nyttig som statusmelding til leder eller teammøte.</p>
+        ${state.weekly ? `<div class="out" id="weekly-out">${esc(state.weekly)}</div><div class="row"><button class="btn" data-action="copy-weekly">Kopier</button></div>` : ""}
+      </div>
+      ${settingsCard()}
+    </section>`;
+  }
+
+  function settingsCard() {
+    return `<div class="card">
+      <h3>Ditt navn</h3>
+      <p class="small muted">Brukes til å skille dine oppgaver fra det du venter på fra andre. Skriv navnet slik det står i møtenotatene.</p>
+      <div class="quick"><input type="text" id="me-name" value="${esc(myName())}" placeholder="F.eks. Jarle" autocomplete="given-name"><button class="btn" data-action="save-name">Lagre</button></div>
+    </div>`;
+  }
+
+  const FILTERS = [["open", "Alle åpne"], ["mine", "Mine"], ["waiting", "Venter på andre"], ["late", "Forfalt"], ["done", "Ferdig"]];
+  function viewTasks() {
+    const all = tasks();
+    const f = ui.filter;
+    let list = all.filter((t) =>
+      f === "done" ? t.status === "done" :
+      t.status !== "done" && (f === "open" || (f === "mine" && isMine(t)) || (f === "waiting" && !isMine(t)) || (f === "late" && dueState(t.due) === "late")));
+    list = f === "done" ? list.sort((a, b) => (b.doneAt || "").localeCompare(a.doneAt || "")) : list.sort(byUrgency);
+    return `<section class="panel">
+      <form class="card" id="quick-form">
+        <label for="quick-text">Ny oppgave</label>
+        <div class="quick"><input type="text" id="quick-text" placeholder="F.eks. Svare Statsforvalteren om høringsuttalelse" autocomplete="off"><button class="btn primary" type="submit">Legg til</button></div>
+        <div class="row small">
+          <label class="row" for="quick-due" style="font-weight:400">Frist <input type="date" id="quick-due" style="width:auto"></label>
+          <label class="row" for="quick-owner" style="font-weight:400">Ansvarlig <input type="text" id="quick-owner" placeholder="meg" style="width:9rem"></label>
+        </div>
+      </form>
+      <div class="filters" role="group" aria-label="Filter">${FILTERS.map(([k, l]) => `<button data-filter="${k}" aria-pressed="${f === k}">${l}</button>`).join("")}</div>
+      <div class="card">
+        ${list.length ? `<ul class="tasks">${list.map((t) => taskRow(t)).join("")}</ul>` : `<p class="muted">${all.length ? "Ingen oppgaver i dette filteret." : "Ingen oppgaver ennå. Skriv en over, eller registrer et møte."}</p>`}
+      </div>
+    </section>`;
+  }
+
+  const EXAMPLE = {
+    title: "Ukemøte plan og byggesak",
+    participants: "Kari (leder), Ola, Siri, meg",
+    notes: "- Reguleringsplan Nordbyen: høringsfristen går ut 1. nov. Ola samler innspillene og lager en oversikt til fredag.\n- Svarfrister i byggesaker: vi ble enige om 3 ukers intern frist fra nå av.\n- Jeg oppdaterer malen for foreløpig svar innen onsdag neste uke.\n- Siri tar kontakt med IT om tilgang til det nye arkivsystemet.\n- Budsjett 2027: Kari trenger innspill fra alle innen 25. oktober.",
+  };
+
+  function viewMeeting() {
+    const d = state.draft;
+    const form = ui.form || { title: "", date: TODAY, participants: "", notes: "" };
+    const past = meetings();
+    return `<section class="panel">
+      <p class="notice warn">Ikke lim inn fødselsnummer, helseopplysninger eller annen taushetsbelagt informasjon. Når du bruker KI-hjelp, sendes teksten til Claude.</p>
+      <form class="card" id="meeting-form">
+        <div class="row between"><h2>Nytt møte</h2><button type="button" class="btn ghost small" data-action="example">Prøv med eksempel</button></div>
+        ${ui.exampleLoaded ? `<p class="notice small">Eksempelnotater er lagt inn. Bytt dem ut med dine egne.</p>` : ""}
+        <div class="grid2">
+          <label for="m-title">Tittel<input type="text" id="m-title" value="${esc(form.title)}" placeholder="F.eks. Ledermøte oppvekst"></label>
+          <label for="m-date">Dato<input type="date" id="m-date" value="${esc(form.date)}"></label>
+        </div>
+        <label for="m-part">Deltakere<input type="text" id="m-part" value="${esc(form.participants)}" placeholder="Navn, adskilt med komma"></label>
+        <label for="m-notes">Notater<textarea id="m-notes" placeholder="Stikkord rett fra møtet. Skriv gjerne hvem som skal gjøre hva, og når.">${esc(form.notes)}</textarea></label>
+        <div class="row">
+          ${aiButton("summarize", "Lag referat og aksjonspunkter")}
+          <button type="button" class="btn" data-action="save-raw">Lagre uten KI</button>
+        </div>
+        ${aiNote()}
+      </form>
+
+      ${d ? draftCard(d) : ""}
+
+      <div class="card">
+        <h2>Møtearkiv</h2>
+        ${past.length ? past.map(meetingItem).join("") : `<p class="muted">Lagrede møter havner her, med referat du kan kopiere til e-post eller sak.</p>`}
+      </div>
+    </section>`;
+  }
+
+  function draftCard(d) {
+    return `<div class="card" id="draft">
+      <h2>Utkast til referat</h2>
+      <label for="d-summary">Referat<textarea id="d-summary">${esc(d.referat || "")}</textarea></label>
+      ${d.beslutninger && d.beslutninger.length ? `<div><h3>Beslutninger</h3><ul class="plain">${d.beslutninger.map((b) => `<li>${esc(b)}</li>`).join("")}</ul></div>` : ""}
+      <div>
+        <h3>Aksjonspunkter</h3>
+        <p class="small muted">Kryss av de du vil legge i oppgavelisten. Du kan rette tekst, ansvarlig og frist.</p>
+        ${(d.aksjonspunkter || []).map((a, i) => `<div class="ap" data-i="${i}">
+          <input type="checkbox" class="t-check" id="ap-on-${i}" ${a.on !== false ? "checked" : ""} aria-label="Ta med">
+          <div class="fields">
+            <input type="text" class="wide" id="ap-text-${i}" value="${esc(a.tekst || "")}" aria-label="Oppgave">
+            <input type="text" id="ap-owner-${i}" value="${esc(a.ansvarlig || "")}" placeholder="Ansvarlig" aria-label="Ansvarlig">
+            <input type="date" id="ap-due-${i}" value="${esc(/^\d{4}-\d\d-\d\d$/.test(a.frist || "") ? a.frist : "")}" aria-label="Frist">
+          </div>
+        </div>`).join("") || `<p class="muted small">Fant ingen aksjonspunkter i notatene.</p>`}
+      </div>
+      <div class="row">
+        <button class="btn primary" data-action="save-draft">Lagre møte og legg til oppgaver</button>
+        <button class="btn" data-action="discard-draft">Forkast utkast</button>
+      </div>
+    </div>`;
+  }
+
+  function referatText(m) {
+    const lines = ["Referat: " + (m.title || "Møte"), "Dato: " + fmtNo(m.date)];
+    if (m.participants) lines.push("Til stede: " + m.participants);
+    lines.push("", m.summary || m.notes || "");
+    if (m.decisions && m.decisions.length) lines.push("", "Beslutninger:", ...m.decisions.map((b) => "- " + b));
+    const aps = tasks().filter((t) => t.meetingId === m.id);
+    if (aps.length) lines.push("", "Aksjonspunkter:", ...aps.map((t) => "- " + t.text + (t.owner ? " (ansvarlig: " + t.owner + ")" : "") + (t.due ? ", frist " + fmtNo(t.due) : "")));
+    return lines.join("\n");
+  }
+
+  function meetingItem(m) {
+    const aps = tasks().filter((t) => t.meetingId === m.id);
+    const openAps = aps.filter((t) => t.status !== "done").length;
+    return `<details class="meeting" data-id="${esc(m.id)}" ${ui.openMeeting === m.id ? "open" : ""}>
+      <summary><strong>${esc(m.title || "Møte uten tittel")}</strong><span class="mono">${esc(fmtNo(m.date))}</span>${aps.length ? `<span class="pill">${openAps} av ${aps.length} åpne</span>` : ""}</summary>
+      <div class="body">
+        <div class="out">${esc(referatText(m))}</div>
+        <div class="row"><button class="btn" data-action="copy-meeting">Kopier referat</button><button class="btn ghost" data-action="delete-meeting" data-confirm="0">Slett møte</button></div>
+      </div>
+    </details>`;
+  }
+
+  // ---------- Render ----------
+  function render() {
+    const d = new Date();
+    $("#today-label").textContent = "Uke " + isoWeek(d) + " · " + DAYS[d.getDay()] + " " + d.getDate() + ". " + MONTHS[d.getMonth()];
+    const badge = $("#mode-badge");
+    badge.dataset.mode = state.mode;
+    badge.textContent = state.mode === "db" ? "Lagret på claude.ai" : state.mode === "connecting" ? "Kobler til …" : "Lagres i denne nettleseren";
+    badge.title = state.mode === "db" ? "Dataene dine er private og følger deg på alle enheter." : "Dataene ligger bare i denne nettleseren.";
+
+    const open = tasks().filter((t) => t.status !== "done");
+    const urgent = open.filter((t) => isMine(t) && (dueState(t.due) === "late" || dueState(t.due) === "today")).length;
+    $("#count-idag").textContent = urgent ? "· " + urgent : "";
+    $("#count-oppgaver").textContent = open.length ? "· " + open.length : "";
+    document.querySelectorAll("nav.tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === ui.tab)));
+
+    // Ta vare på skjemaverdier og fokus mellom renders
+    captureForm();
+    const ae = document.activeElement;
+    const active = ae && ae.id;
+    const sel = ae && typeof ae.selectionStart === "number" ? [ae.selectionStart, ae.selectionEnd] : null;
+    const view = $("#view");
+    view.innerHTML = ui.tab === "oppgaver" ? viewTasks() : ui.tab === "mote" ? viewMeeting() : viewToday();
+    const again = active && /^(quick-|m-|me-name|d-|ap-)/.test(active) && document.getElementById(active);
+    if (again) { again.focus(); if (sel) try { again.setSelectionRange(sel[0], sel[1]); } catch {} }
+  }
+  function captureForm() {
+    if ($("#meeting-form")) ui.form = { title: $("#m-title").value, date: $("#m-date").value, participants: $("#m-part").value, notes: $("#m-notes").value };
+    if ($("#draft") && state.draft) captureDraft();
+  }
+  function captureDraft() {
+    const d = state.draft;
+    d.referat = $("#d-summary").value;
+    (d.aksjonspunkter || []).forEach((a, i) => {
+      a.on = $("#ap-on-" + i).checked; a.tekst = $("#ap-text-" + i).value; a.ansvarlig = $("#ap-owner-" + i).value; a.frist = $("#ap-due-" + i).value;
+    });
+  }
+
+  // ---------- Hendelser ----------
+  document.addEventListener("click", async (ev) => {
+    const tab = ev.target.closest("nav.tabs button");
+    if (tab) return setUi({ tab: tab.dataset.tab });
+    const go = ev.target.closest("[data-goto]");
+    if (go) return setUi({ tab: go.dataset.goto });
+    const flt = ev.target.closest("[data-filter]");
+    if (flt) return setUi({ filter: flt.dataset.filter });
+
+    const el = ev.target.closest("[data-action]");
+    if (!el) return;
+    const action = el.dataset.action;
+    const li = el.closest("li[data-id]");
+    const task = li && state.items[li.dataset.id];
+
+    // To-trinns bekreftelse (confirm() virker ikke i visningen)
+    if (el.dataset.confirm === "0") {
+      el.dataset.confirm = "1"; const old = el.textContent; el.textContent = "Bekreft sletting";
+      setTimeout(() => { if (el.isConnected) { el.dataset.confirm = "0"; el.textContent = old; } }, 3000);
+      return;
+    }
+
+    if (action === "toggle" && task) {
+      const done = task.status !== "done";
+      return put({ ...task, status: done ? "done" : "open", doneAt: done ? TODAY : null });
+    }
+    if (action === "prio" && task) {
+      const next = { normal: "high", high: "low", low: "normal" }[task.priority || "normal"];
+      return put({ ...task, priority: next });
+    }
+    if (action === "delete" && task) return remove(task.id);
+
+    if (action === "save-name") {
+      const name = $("#me-name").value.trim();
+      await put({ id: "settings", kind: "settings", name });
+      return toast(name ? "Lagret. Oppgaver merket «" + name + "» regnes som dine." : "Navn fjernet");
+    }
+
+    if (action === "example") {
+      ui.form = { ...EXAMPLE, date: TODAY }; ui.exampleLoaded = true;
+      $("#m-title").value = EXAMPLE.title; $("#m-part").value = EXAMPLE.participants; $("#m-notes").value = EXAMPLE.notes; $("#m-date").value = TODAY;
+      return render();
+    }
+
+    if (action === "summarize") {
+      captureForm();
+      const f = ui.form;
+      if (!f.notes.trim()) { toast("Skriv eller lim inn notater først."); $("#m-notes").focus(); return; }
+      state.busy.summarize = true; render();
+      try {
+        const res = await makeSummary(f);
+        state.draft = {
+          referat: String(res.referat || ""),
+          beslutninger: Array.isArray(res.beslutninger) ? res.beslutninger.map(String) : [],
+          aksjonspunkter: Array.isArray(res.aksjonspunkter) ? res.aksjonspunkter.map((a) => ({ tekst: String(a.tekst || ""), ansvarlig: a.ansvarlig ? String(a.ansvarlig) : "", frist: a.frist || "", on: true })) : [],
+        };
+      } catch (e) { toast(aiError(e)); }
+      state.busy.summarize = false; render();
+      const dr = $("#draft"); if (dr) dr.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+      return;
+    }
+
+    if (action === "save-raw" || action === "save-draft") {
+      captureForm();
+      const f = ui.form;
+      if (!f.notes.trim() && !f.title.trim()) { toast("Fyll inn tittel eller notater først."); return; }
+      const m = { id: uid("m"), kind: "meeting", title: f.title.trim() || "Møte", date: f.date || TODAY, participants: f.participants.trim(), notes: f.notes, createdAt: Date.now() };
+      const newTasks = [];
+      if (action === "save-draft" && state.draft) {
+        m.summary = state.draft.referat; m.decisions = state.draft.beslutninger;
+        state.draft.aksjonspunkter.filter((a) => a.on && a.tekst.trim()).forEach((a) => newTasks.push({
+          id: uid("t"), kind: "task", text: a.tekst.trim(), owner: a.ansvarlig.trim(), due: a.frist || "", priority: "normal", status: "open", meetingId: m.id, createdAt: Date.now(),
+        }));
+      }
+      state.draft = null; ui.form = { title: "", date: TODAY, participants: "", notes: "" }; ui.exampleLoaded = false; ui.openMeeting = m.id;
+      // Tøm skjemaet før render, ellers fanger captureForm opp de gamle verdiene
+      ["#m-title", "#m-part", "#m-notes"].forEach((s) => { if ($(s)) $(s).value = ""; });
+      await putMany([m, ...newTasks]);
+      return toast(newTasks.length ? "Møtet er lagret og " + newTasks.length + " oppgaver er lagt til" : "Møtet er lagret");
+    }
+    if (action === "discard-draft") { state.draft = null; return render(); }
+
+    const det = el.closest("details.meeting");
+    const meeting = det && state.items[det.dataset.id];
+    if (action === "copy-meeting" && meeting) return copy(referatText(meeting));
+    if (action === "delete-meeting" && meeting) return remove(meeting.id);
+
+    if (action === "pick") {
+      const open = tasks().filter((t) => t.status !== "done").sort(byUrgency);
+      if (!open.length) return toast("Ingen åpne oppgaver å prioritere.");
+      const lines = open.slice(0, 60).map((t) => `[${t.id}] ${t.text} | frist: ${t.due || "ingen"} | prioritet: ${t.priority || "normal"} | ansvarlig: ${isMine(t) ? "meg" : t.owner}`);
+      const prompt = [
+        "Du hjelper en ansatt i en norsk kommune med å prioritere arbeidsdagen. " + todayLine(),
+        "Velg de tre oppgavene brukeren selv bør starte med i dag. Vekt forfalte frister, frister i dag og høy prioritet tyngst. Oppgaver der andre er ansvarlige kan velges bare hvis det bør purres.",
+        "Gi en kort begrunnelse (maks 15 ord) per valg på norsk bokmål.",
+        'Svar bare med JSON: {"valg": [{"id": "...", "grunn": "..."}], "kommentar": "én kort setning, eller tom streng"}',
+        "", "Oppgaver:", ...lines,
+      ].join("\n");
+      state.busy.pick = true; render();
+      try {
+        const res = await state.ai.json(prompt, { modelTier: "quick", cache: false });
+        state.picks = { valg: (res.valg || []).slice(0, 3), kommentar: res.kommentar || "" };
+        lsSet("oppfolgeren.picks." + TODAY, state.picks);
+      } catch (e) { toast(aiError(e)); }
+      state.busy.pick = false; return render();
+    }
+
+    if (action === "weekly") {
+      const done = tasks().filter((t) => t.status === "done" && t.doneAt && t.doneAt >= WEEK_START);
+      const open = tasks().filter((t) => t.status !== "done").sort(byUrgency);
+      const mts = meetings().filter((m) => m.date >= WEEK_START && m.date <= WEEK_END);
+      const prompt = [
+        "Skriv en kort statusoppsummering for uke " + isoWeek(now) + " på norsk bokmål, egnet å lime inn i en e-post til leder. " + todayLine(),
+        "Bruk tre korte avsnitt med overskriftene «Gjort», «Pågår» og «Trenger avklaring». Bruk kulepunkter. Ingen innledning eller hilsen. Ikke finn på noe som ikke står under.",
+        "", "Fullført denne uka:", ...(done.length ? done.map((t) => "- " + t.text) : ["(ingen)"]),
+        "", "Åpne oppgaver:", ...(open.length ? open.slice(0, 40).map((t) => "- " + t.text + (t.due ? " (frist " + t.due + ")" : "") + (isMine(t) ? "" : " [venter på " + t.owner + "]")) : ["(ingen)"]),
+        "", "Møter denne uka:", ...(mts.length ? mts.map((m) => "- " + m.title + ": " + (m.summary || "").slice(0, 400)) : ["(ingen)"]),
+      ].join("\n");
+      state.busy.weekly = true; state.weekly = ""; render();
+      try {
+        const res = await state.ai(prompt, { modelTier: "default", cache: false, onText: ({ text }) => { state.weekly = text; const o = $("#weekly-out"); if (o) o.textContent = text; else render(); } });
+        state.weekly = res.text;
+      } catch (e) { toast(aiError(e)); if (e && e.text) state.weekly = e.text; }
+      state.busy.weekly = false; return render();
+    }
+    if (action === "copy-weekly") return copy(state.weekly);
+  });
+
+  document.addEventListener("change", (ev) => {
+    const el = ev.target;
+    if (el.dataset.action === "due") {
+      const li = el.closest("li[data-id]"); const t = li && state.items[li.dataset.id];
+      if (t) put({ ...t, due: el.value });
+    }
+  });
+  document.addEventListener("toggle", (ev) => {
+    if (ev.target.matches && ev.target.matches("details.meeting")) ui.openMeeting = ev.target.open ? ev.target.dataset.id : null;
+  }, true);
+
+  document.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    if (ev.target.id === "quick-form") {
+      const text = $("#quick-text").value.trim();
+      if (!text) return;
+      const t = { id: uid("t"), kind: "task", text, owner: $("#quick-owner").value.trim(), due: $("#quick-due").value, priority: "normal", status: "open", createdAt: Date.now() };
+      $("#quick-text").value = ""; $("#quick-owner").value = ""; $("#quick-due").value = "";
+      put(t);
+      $("#quick-text") && $("#quick-text").focus();
+    }
+  });
+
+  // ---------- Oppstart ----------
+  render();
+  (async () => {
+    const c = window.claude;
+    if (!c || typeof c.use !== "function") { state.aiChecked = true; return render(); }
+    state.mode = "connecting"; render();
+    const [db, user, sample] = await Promise.all([
+      c.use("db").catch(() => null), c.use("user").catch(() => null), c.use("sample").catch(() => null),
+    ]);
+    state.ai = sample; state.aiChecked = true;
+    let id = null;
+    if (db && user) { try { id = await user.id(); } catch {} }
+    if (!db || !id) { state.mode = "local"; return render(); }
+    col = db.collection("data/users/" + id);
+    let first = true;
+    col.onSnapshot((snap) => {
+      const items = {};
+      snap.docs.forEach((d) => { items[d.id] = { ...d.data(), id: d.id }; });
+      if (first) {
+        first = false;
+        // Flytt det som ble lagret lokalt før tilkobling inn i den private lagringen
+        const local = lsGet(LS_ITEMS, {});
+        const missing = Object.values(local).filter((i) => !items[i.id]);
+        state.mode = "db";
+        if (missing.length) {
+          missing.forEach((i) => { items[i.id] = i; col.doc(i.id).set(i).catch(() => {}); });
+          lsSet(LS_ITEMS, {});
+          toast(missing.length + " lokale elementer er flyttet til claude.ai");
+        }
+      }
+      state.items = items; render();
+    }, (err) => {
+      state.mode = "local"; state.items = lsGet(LS_ITEMS, {}); render();
+      toast("Fikk ikke kontakt med lagringen. Endringer lagres i denne nettleseren.");
+    });
+  })();
+})();
+</script>
