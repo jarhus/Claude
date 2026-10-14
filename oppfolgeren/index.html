@@ -106,7 +106,7 @@ button.btn:disabled { opacity: 0.55; cursor: progress; }
 .stat.today b { color: var(--today); }
 .stat.wait b { color: var(--wait); }
 
-.filters { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
 .filters button { flex: none; font: 600 0.85rem var(--font-body); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
 .filters button[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); }
 
@@ -150,6 +150,10 @@ details.meeting summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 
 details.meeting summary .mono { color: var(--muted); font-size: 0.85rem; }
 details.meeting .body { display: grid; gap: 10px; padding-top: 10px; }
 
+.list-split { padding-top: 14px; margin-top: 4px; border-top: 1px solid var(--line); display: flex; gap: 8px; align-items: baseline; }
+.filters button .mono { font-size: 0.75rem; font-weight: 500; opacity: 0.75; }
+.toast { display: flex; gap: 14px; align-items: center; }
+.toast-btn { font: 600 0.9rem var(--font-body); color: var(--bg); background: transparent; border: 1px solid currentColor; border-radius: 6px; padding: 3px 10px; cursor: pointer; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; font-size: 0.9rem; max-width: calc(100% - 32px); z-index: 10; }
 @media (prefers-reduced-motion: no-preference) { .toast { animation: rise .18s ease-out; } @keyframes rise { from { transform: translate(-50%, 8px); opacity: 0; } } }
 </style>
@@ -215,10 +219,12 @@ details.meeting .body { display: grid; gap: 10px; padding-top: 10px; }
     return "Frist " + fmtShort(due);
   }
 
-  let toastTimer;
-  function toast(msg) {
-    const t = $("#toast"); t.textContent = msg; t.hidden = false;
-    clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.hidden = true), 3200);
+  let toastTimer, toastUndo = null;
+  function toast(msg, undo) {
+    const t = $("#toast");
+    t.innerHTML = `<span>${esc(msg)}</span>${undo ? '<button type="button" class="toast-btn" id="toast-undo">Angre</button>' : ""}`;
+    toastUndo = undo || null; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; toastUndo = null; }, undo ? 6000 : 3200);
   }
   async function copy(text, btn) {
     try { await navigator.clipboard.writeText(text); toast("Kopiert"); }
@@ -412,14 +418,21 @@ details.meeting .body { display: grid; gap: 10px; padding-top: 10px; }
     </div>`;
   }
 
-  const FILTERS = [["open", "Alle åpne"], ["mine", "Mine"], ["waiting", "Venter på andre"], ["late", "Forfalt"], ["done", "Ferdig"]];
+  const FILTERS = [["open", "Åpne"], ["mine", "Mine"], ["waiting", "Venter på andre"], ["late", "Forfalt"], ["done", "Ferdig"], ["all", "Alle"]];
+  const matchesFilter = (t, f) =>
+    f === "all" ? true :
+    f === "done" ? t.status === "done" :
+    t.status !== "done" && (f === "open" || (f === "mine" && isMine(t)) || (f === "waiting" && !isMine(t)) || (f === "late" && dueState(t.due) === "late"));
+  const byDoneDesc = (a, b) => (b.doneAt || "").localeCompare(a.doneAt || "") || (b.createdAt || 0) - (a.createdAt || 0);
   function viewTasks() {
     const all = tasks();
     const f = ui.filter;
-    let list = all.filter((t) =>
-      f === "done" ? t.status === "done" :
-      t.status !== "done" && (f === "open" || (f === "mine" && isMine(t)) || (f === "waiting" && !isMine(t)) || (f === "late" && dueState(t.due) === "late")));
-    list = f === "done" ? list.sort((a, b) => (b.doneAt || "").localeCompare(a.doneAt || "")) : list.sort(byUrgency);
+    const list = all.filter((t) => matchesFilter(t, f));
+    const openList = list.filter((t) => t.status !== "done").sort(byUrgency);
+    const doneList = list.filter((t) => t.status === "done").sort(byDoneDesc);
+    const body = f === "all" && openList.length && doneList.length
+      ? `<ul class="tasks">${openList.map((t) => taskRow(t)).join("")}</ul><h3 class="list-split">Fullført <span class="mono muted">${doneList.length}</span></h3><ul class="tasks">${doneList.map((t) => taskRow(t)).join("")}</ul>`
+      : `<ul class="tasks">${[...openList, ...doneList].map((t) => taskRow(t)).join("")}</ul>`;
     return `<section class="panel">
       <form class="card" id="quick-form">
         <label for="quick-text">Ny oppgave</label>
@@ -429,9 +442,9 @@ details.meeting .body { display: grid; gap: 10px; padding-top: 10px; }
           <label class="row" for="quick-owner" style="font-weight:400">Ansvarlig <input type="text" id="quick-owner" placeholder="meg" style="width:9rem"></label>
         </div>
       </form>
-      <div class="filters" role="group" aria-label="Filter">${FILTERS.map(([k, l]) => `<button data-filter="${k}" aria-pressed="${f === k}">${l}</button>`).join("")}</div>
+      <div class="filters" role="group" aria-label="Filter">${FILTERS.map(([k, l]) => `<button data-filter="${k}" aria-pressed="${f === k}">${l} <span class="mono">${all.filter((t) => matchesFilter(t, k)).length}</span></button>`).join("")}</div>
       <div class="card">
-        ${list.length ? `<ul class="tasks">${list.map((t) => taskRow(t)).join("")}</ul>` : `<p class="muted">${all.length ? "Ingen oppgaver i dette filteret." : "Ingen oppgaver ennå. Skriv en over, eller registrer et møte."}</p>`}
+        ${list.length ? body : `<p class="muted">${all.length ? "Ingen oppgaver i dette filteret." : "Ingen oppgaver ennå. Skriv en over, eller registrer et møte."}</p>`}
       </div>
     </section>`;
   }
@@ -558,6 +571,11 @@ details.meeting .body { display: grid; gap: 10px; padding-top: 10px; }
 
   // ---------- Hendelser ----------
   document.addEventListener("click", async (ev) => {
+    if (ev.target.closest("#toast-undo")) {
+      const fn = toastUndo; toastUndo = null; $("#toast").hidden = true;
+      if (fn) { await fn(); toast("Angret"); }
+      return;
+    }
     const tab = ev.target.closest("nav.tabs button");
     if (tab) return setUi({ tab: tab.dataset.tab });
     const go = ev.target.closest("[data-goto]");
@@ -580,7 +598,10 @@ details.meeting .body { display: grid; gap: 10px; padding-top: 10px; }
 
     if (action === "toggle" && task) {
       const done = task.status !== "done";
-      return put({ ...task, status: done ? "done" : "open", doneAt: done ? TODAY : null });
+      await put({ ...task, status: done ? "done" : "open", doneAt: done ? TODAY : null });
+      if (done && !matchesFilter({ ...task, status: "done" }, ui.tab === "oppgaver" ? ui.filter : "open"))
+        toast("Fullført. Du finner den under Ferdig og Alle.", () => put({ ...task }));
+      return;
     }
     if (action === "prio" && task) {
       const next = { normal: "high", high: "low", low: "normal" }[task.priority || "normal"];
