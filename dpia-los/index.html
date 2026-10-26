@@ -1,0 +1,1109 @@
+<title>DPIA-los</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+/* Layout: a steady two-column workbench — a sticky step register on the left, one form column on the right; KI output always appears in its own marked card beside the field it concerns. */
+:root{
+  --paper:#F3F5F6; --surface:#FFFFFF; --sunken:#EBEFF1;
+  --ink:#132235; --muted:#56657A; --faint:#8995A4; --line:#D9E0E5;
+  --accent:#1B5A61; --accent-ink:#FFFFFF; --accent-soft:#E2EEEE;
+  --ki:#5446A8; --ki-soft:#EFEDFA; --ki-line:#CFC8F0;
+  --ok:#2F7D4F; --ok-soft:#E3F1E8; --warn:#9A6A00; --warn-soft:#FBF1D9; --bad:#A63A2C; --bad-soft:#F8E4E0;
+  --r1:#3E8E5B; --r2:#C59A1C; --r3:#D07A2A; --r4:#B33D2E;
+  --r1bg:#DDEFE3; --r2bg:#F7EDCC; --r3bg:#F8E1CB; --r4bg:#F4D6D1;
+  --shadow:0 1px 2px rgba(19,34,53,.06),0 4px 16px rgba(19,34,53,.05);
+  --f-display:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0E151D; --surface:#151F2A; --sunken:#1B2733;
+  --ink:#E5EBF0; --muted:#A1AEBB; --faint:#74828F; --line:#273544;
+  --accent:#6BB8B8; --accent-ink:#0B1B1E; --accent-soft:#16302F;
+  --ki:#AEA2F2; --ki-soft:#1F1C35; --ki-line:#3B3566;
+  --ok:#6CC28E; --ok-soft:#14291D; --warn:#E3B34B; --warn-soft:#2B2410; --bad:#EE8B7C; --bad-soft:#331915;
+  --r1:#5DB57D; --r2:#D9B23C; --r3:#E59448; --r4:#E2685A;
+  --r1bg:#1F4029; --r2bg:#423715; --r3bg:#4A3016; --r4bg:#52251F;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#0E151D; --surface:#151F2A; --sunken:#1B2733;
+  --ink:#E5EBF0; --muted:#A1AEBB; --faint:#74828F; --line:#273544;
+  --accent:#6BB8B8; --accent-ink:#0B1B1E; --accent-soft:#16302F;
+  --ki:#AEA2F2; --ki-soft:#1F1C35; --ki-line:#3B3566;
+  --ok:#6CC28E; --ok-soft:#14291D; --warn:#E3B34B; --warn-soft:#2B2410; --bad:#EE8B7C; --bad-soft:#331915;
+  --r1:#5DB57D; --r2:#D9B23C; --r3:#E59448; --r4:#E2685A;
+  --r1bg:#1F4029; --r2bg:#423715; --r3bg:#4A3016; --r4bg:#52251F;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;letter-spacing:-.005em}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-size:.82em}
+.eyebrow{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* Top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:16px;min-height:60px;flex-wrap:wrap;padding-block:8px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand svg{flex:none}
+.brand b{font-family:var(--f-display);font-size:19px;font-weight:600;letter-spacing:-.01em}
+.brand span{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-progress{flex:1;min-width:160px;display:flex;align-items:center;gap:10px}
+.bar{flex:1;height:6px;background:var(--sunken);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s ease}
+.top-progress small{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12.5px;white-space:nowrap}
+.top-actions{display:flex;gap:8px;align-items:center}
+.save-state{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.save-state::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);
+  border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:500;font-size:14px;line-height:1.2;transition:background .15s,border-color .15s}
+.btn:hover{background:var(--sunken)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ki{color:var(--ki);border-color:var(--ki-line);background:var(--ki-soft)}
+.btn.ki:hover{border-color:var(--ki)}
+.btn.small{padding:5px 10px;font-size:13px;border-radius:7px}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.ghost:hover{background:var(--sunken)}
+.btn.danger{color:var(--bad);border-color:var(--bad-soft)}
+.ki-mark{display:inline-grid;place-items:center;font-family:var(--f-mono);font-size:10px;font-weight:500;letter-spacing:.04em;
+  border-radius:4px;padding:1px 5px;background:var(--ki);color:var(--surface)}
+
+/* Shell */
+.shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:264px minmax(0,1fr);gap:32px;
+  padding-block:28px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.steps{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);align-self:start;display:flex;flex-direction:column;gap:2px}
+.steps .eyebrow{padding:0 10px 8px}
+.step{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:center;text-align:left;border:0;background:transparent;
+  padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--muted)}
+.step:hover{background:var(--sunken);color:var(--ink)}
+.step.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.step .dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;
+  border:1.5px solid var(--line);font-variant-numeric:tabular-nums;background:var(--surface)}
+.step.on .dot{border-color:var(--accent);color:var(--accent)}
+.step.done .dot{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.step .lbl{font-size:14px;font-weight:500;line-height:1.25}
+.step .sub{display:block;font-size:12px;color:var(--faint);font-weight:400;font-variant-numeric:tabular-nums}
+.trust-mini{margin-top:18px;padding:14px;border-radius:var(--radius);background:var(--accent-soft);font-size:13px;color:var(--ink);display:grid;gap:8px}
+.trust-mini b{font-weight:600}
+.trust-mini button{justify-self:start}
+
+main{min-width:0;display:flex;flex-direction:column;gap:20px}
+.example-banner{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--warn-soft);color:var(--ink);border-radius:var(--radius);
+  padding:10px 14px;font-size:13.5px}
+.example-banner b{color:var(--warn)}
+.sec-head{display:grid;gap:8px;max-width:68ch}
+.sec-head h1{font-size:30px;line-height:1.15}
+.sec-head p{color:var(--muted);font-size:15.5px}
+.art{display:inline-flex;gap:6px;align-items:center;font-family:var(--f-mono);font-size:12px;color:var(--accent);background:var(--accent-soft);
+  padding:2px 8px;border-radius:5px;justify-self:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.form{padding:8px 24px}
+.field{display:grid;gap:8px;padding-block:20px;border-bottom:1px solid var(--line)}
+.field:last-child{border-bottom:0}
+.field label.q,.field .q{font-weight:600;font-size:15px;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.req{color:var(--bad);font-weight:600}
+.help{color:var(--muted);font-size:13.5px;max-width:70ch}
+input[type=text],input[type=date],select,textarea{width:100%;border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:9px 12px;
+  transition:border-color .15s,background .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px var(--accent-soft)}
+textarea{min-height:110px;resize:vertical;line-height:1.5}
+.field-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.field-tools .count{margin-left:auto;font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
+.ki-used{font-size:12px;color:var(--ki);display:inline-flex;gap:5px;align-items:center}
+.opts{display:grid;gap:8px}
+.opt{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:var(--paper)}
+.opt:hover{border-color:var(--faint)}
+.opt input{margin:3px 0 0;accent-color:var(--accent);width:16px;height:16px}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt b{font-weight:500;display:block}
+.opt small{color:var(--muted);font-size:13px}
+.opts.inline{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px}
+.grid2 .field{border-bottom:1px solid var(--line)}
+
+/* KI cards */
+.ki-card{border:1px solid var(--ki-line);background:var(--ki-soft);border-radius:var(--radius);padding:14px 16px;display:grid;gap:10px}
+.ki-card header{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ki);font-weight:600}
+.ki-card header .sp{margin-left:auto}
+.ki-text{white-space:pre-wrap;font-size:14.5px;color:var(--ink)}
+.ki-text.wait{color:var(--muted);font-style:italic}
+.ki-actions{display:flex;gap:8px;flex-wrap:wrap}
+.ki-note{font-size:12px;color:var(--muted)}
+.ki-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.ki-list li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;font-size:14px}
+.ki-list li::before{content:"";width:8px;height:8px;border-radius:50%;margin-top:7px;background:var(--warn)}
+.ki-list.good li::before{background:var(--ok)}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--ki);animation:pulse 1.2s infinite ease-in-out}
+@keyframes pulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}.bar i{transition:none}}
+
+/* Section footer nav */
+.sec-nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sec-nav .sp{flex:1}
+.review-box{display:grid;gap:12px}
+
+/* Screening verdict */
+.verdict{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;padding:16px 18px;border-radius:var(--radius)}
+.verdict .num{font-family:var(--f-display);font-size:34px;line-height:1;font-variant-numeric:tabular-nums}
+.verdict.v0{background:var(--ok-soft)}.verdict.v1{background:var(--warn-soft)}.verdict.v2{background:var(--bad-soft)}
+.verdict.v0 .num{color:var(--ok)}.verdict.v1 .num{color:var(--warn)}.verdict.v2 .num{color:var(--bad)}
+.verdict b{display:block}
+.verdict span{font-size:13.5px;color:var(--muted)}
+
+/* Risks */
+.risk-top{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.matrix-card{padding:16px}
+.matrix-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--paper)}
+.seg button{border:0;background:transparent;padding:4px 10px;border-radius:6px;font-size:12.5px;cursor:pointer;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.matrix{display:grid;grid-template-columns:22px repeat(4,minmax(0,1fr));grid-template-rows:repeat(4,52px) 22px;gap:3px}
+.matrix .cell{border-radius:5px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:3px;padding:3px}
+.matrix .ax{font-size:10.5px;color:var(--faint);display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.matrix .yl{writing-mode:vertical-rl;transform:rotate(180deg)}
+.lv1{background:var(--r1bg)}.lv2{background:var(--r2bg)}.lv3{background:var(--r3bg)}.lv4{background:var(--r4bg)}
+.chip{font-family:var(--f-mono);font-size:10.5px;font-weight:500;background:var(--surface);color:var(--ink);border-radius:4px;padding:1px 4px;border:1px solid var(--line)}
+.axis-cap{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px;padding-left:25px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.risk-list{display:grid;gap:14px}
+.risk{padding:0;overflow:hidden}
+.risk-h{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--paper);flex-wrap:wrap}
+.risk-h .rid{font-family:var(--f-mono);font-weight:500;font-size:13px;color:var(--accent)}
+.risk-h input{flex:1 1 260px;min-width:0;background:transparent;border-color:transparent;font-weight:600;padding:6px 8px}
+.risk-h input:hover{border-color:var(--line)}
+.risk-b{padding:4px 16px 14px}
+.risk-b .field{padding-block:14px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.pill.lv1{color:var(--r1)}.pill.lv2{color:var(--r2)}.pill.lv3{color:var(--r3)}.pill.lv4{color:var(--r4)}
+.pill.lv0{background:var(--sunken);color:var(--muted)}
+.scales{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px}
+.scales .phase{grid-column:1/-1;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--muted)}
+.scales .phase::after{content:"";flex:1;height:1px;background:var(--line)}
+.scales label{display:grid;gap:5px;font-size:13px;color:var(--muted)}
+.empty{padding:28px;text-align:center;color:var(--muted);display:grid;gap:12px;justify-items:center}
+.sugg-risk{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--ki-line);border-radius:8px;align-items:start}
+.sugg-risk input{margin-top:3px;accent-color:var(--ki)}
+.sugg-risk b{display:block;font-weight:600;font-size:14px}
+.sugg-risk small{color:var(--muted);font-size:13px;display:block}
+
+/* Start */
+.hero{padding:32px;display:grid;gap:18px;background:var(--surface)}
+.hero h1{font-size:clamp(28px,4vw,40px);line-height:1.1;max-width:22ch}
+.hero p.lead{font-size:16.5px;color:var(--muted);max-width:62ch}
+.hero .cta{display:flex;gap:10px;flex-wrap:wrap}
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.how > div{padding:18px;display:grid;gap:6px;align-content:start}
+.how b{font-family:var(--f-display);font-size:16.5px;font-weight:600}
+.how p{font-size:13.5px;color:var(--muted)}
+.trust{padding:22px 24px;display:grid;gap:14px}
+.trust ul{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.trust li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;font-size:14px}
+.trust li svg{color:var(--accent)}
+.trust li b{display:block}
+.trust li span{color:var(--muted)}
+.outline{display:grid;gap:0}
+.outline div{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.outline div:last-child{border-bottom:0}
+.outline .n{font-variant-numeric:tabular-nums;color:var(--faint);font-weight:600}
+
+/* Report */
+.status-grid{display:grid;gap:0}
+.status-row{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+.status-row:last-child{border-bottom:0}
+.status-row .ic{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;margin-top:1px}
+.status-row .ic.ok{background:var(--ok-soft);color:var(--ok)}
+.status-row .ic.no{background:var(--warn-soft);color:var(--warn)}
+.status-row small{display:block;color:var(--muted);font-size:13px}
+.doc-cta{padding:22px 24px;display:grid;gap:14px}
+.doc-cta .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.notice{font-size:13.5px;padding:10px 12px;border-radius:8px;background:var(--sunken);color:var(--ink)}
+.notice.ok{background:var(--ok-soft)}.notice.bad{background:var(--bad-soft)}
+.docprev{padding:28px 32px;font-family:var(--f-body);display:grid;gap:10px;max-height:520px;overflow:auto}
+.docprev h2{font-size:20px;margin-top:10px}
+.docprev h3{font-size:15px;font-family:var(--f-body);font-weight:600;margin-top:6px}
+.docprev p{font-size:14px;white-space:pre-wrap}
+.docprev .muted{color:var(--muted)}
+
+/* Drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,18,28,.45);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--surface);z-index:41;display:flex;flex-direction:column;
+  border-left:1px solid var(--line);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.drawer-h{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.drawer-h h2{font-size:18px;flex:1}
+.drawer-b{flex:1;overflow:auto;padding:18px;display:grid;gap:12px;align-content:start}
+.drawer-f{border-top:1px solid var(--line);padding:12px 18px;display:grid;gap:8px}
+.msg{padding:10px 12px;border-radius:10px;font-size:14px;white-space:pre-wrap;max-width:92%}
+.msg.u{background:var(--accent-soft);justify-self:end}
+.msg.a{background:var(--ki-soft);border:1px solid var(--ki-line)}
+.chat-in{display:flex;gap:8px}
+.chat-in textarea{min-height:44px;height:44px}
+.suggest-q{display:flex;gap:6px;flex-wrap:wrap}
+.suggest-q button{font-size:12.5px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);
+  padding:10px 16px;border-radius:8px;font-size:14px;z-index:60;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13.5px;padding:10px 12px;border-radius:8px;background:var(--bad-soft)}
+
+@media (max-width:980px){
+  .risk-top{grid-template-columns:minmax(0,1fr)}
+  .matrix-card{order:-1}
+}
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:18px;padding-block:16px 60px}
+  .steps{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:thin}
+  .steps .eyebrow,.trust-mini{display:none}
+  .step{grid-template-columns:22px auto;flex:none;padding:6px 10px;border:1px solid var(--line);background:var(--surface)}
+  .step .dot{width:22px;height:22px;font-size:11px}
+  .step .sub{display:none}
+  .how{grid-template-columns:minmax(0,1fr)}
+  .grid2{grid-template-columns:minmax(0,1fr)}
+  .top-progress{order:3;flex-basis:100%}
+  .save-state{display:none}
+}
+@media (max-width:520px){
+  .form{padding:4px 16px}
+  .hero{padding:22px 18px}
+  .sec-head h1{font-size:25px}
+  .scales{grid-template-columns:minmax(0,1fr)}
+  .docprev{padding:18px}
+  .brand span{display:none}
+}
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="5" y="3" width="20" height="24" rx="3" fill="none" stroke="var(--accent)" stroke-width="2"/><path d="M10 10h10M10 14h7" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/><path d="M11 20.5l2.6 2.5 5.4-5.6" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <b>DPIA-los</b><span id="docName">Personvernkonsekvensvurdering</span>
+    </div>
+    <div class="top-progress" aria-label="Fremdrift">
+      <div class="bar"><i id="barFill" style="width:0%"></i></div><small id="barText">0 av 0 obligatoriske svar</small>
+    </div>
+    <div class="top-actions">
+      <span class="save-state" id="saveState">Lagret i nettleseren</span>
+      <button class="btn ki small" id="openChat" type="button"><span class="ki-mark">KI</span> Spør rådgiveren</button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="steps" id="steps" aria-label="Steg i vurderingen"></nav>
+  <main id="main"></main>
+</div>
+
+<div id="overlay"></div>
+<div id="toastHost"></div>
+
+<script>
+/* ===================== CORE (no DOM) ===================== */
+const CRITERIA = [
+  {id:'eval', label:'Evaluering eller poengsetting', desc:'Profilering eller prediksjon, f.eks. av helse, økonomi, arbeidsprestasjon eller atferd.'},
+  {id:'auto', label:'Automatiserte avgjørelser med betydelig virkning', desc:'Avgjørelser som har rettsvirkning eller tilsvarende betydelig påvirkning for den registrerte.'},
+  {id:'monitor', label:'Systematisk overvåking', desc:'Observasjon, overvåking eller kontroll av registrerte, også på offentlig tilgjengelige steder.'},
+  {id:'sensitive', label:'Særlige kategorier eller svært personlige opplysninger', desc:'Helse, etnisitet, religion, biometri, straffedommer, lokasjon, kommunikasjon m.m.'},
+  {id:'scale', label:'Behandling i stor skala', desc:'Mange registrerte, store datamengder, lang varighet eller stort geografisk omfang.'},
+  {id:'combine', label:'Sammenstilling av datasett', desc:'Kobling av data fra flere kilder eller formål på en måte de registrerte ikke forventer.'},
+  {id:'vulnerable', label:'Sårbare registrerte', desc:'Barn, ansatte, pasienter, eldre, asylsøkere eller andre med skjevt maktforhold.'},
+  {id:'innovative', label:'Innovativ bruk eller ny teknologi', desc:'F.eks. kunstig intelligens, biometri, sensorer eller tingenes internett.'},
+  {id:'blocks', label:'Hindrer utøvelse av rettigheter eller tilgang til tjeneste', desc:'Behandlingen kan stenge noen ute fra en tjeneste, kontrakt eller ytelse.'}
+];
+const LEVELS = ['','Lav','Moderat','Høy','Svært høy'];
+const LIKELIHOOD = ['','Lite sannsynlig','Mulig','Sannsynlig','Svært sannsynlig'];
+const CONSEQUENCE = ['','Ubetydelig','Begrenset','Alvorlig','Svært alvorlig'];
+function riskLevel(s,k){ s=+s||0; k=+k||0; if(!s||!k) return 0; const p=s*k; return p<=3?1:p<=6?2:p<=9?3:4; }
+
+const SECTIONS = [
+  {id:'meta', title:'Om vurderingen', art:'Art. 35 (1)', intro:'Grunnopplysninger om hvem som gjennomfører vurderingen og hvilken behandling den gjelder.', fields:[
+    {id:'org', type:'text', label:'Behandlingsansvarlig virksomhet', req:true, help:'Virksomheten som bestemmer formålet med behandlingen og hvilke midler som skal brukes.'},
+    {id:'name', type:'text', label:'Navn på behandlingen eller prosjektet', req:true, help:'Et kort, gjenkjennelig navn. Det brukes som tittel i rapporten.'},
+    {id:'owner', type:'text', label:'Ansvarlig enhet og behandlingseier', req:true, help:'Enheten og personen (rolle) som eier behandlingen i virksomheten.'},
+    {id:'author', type:'text', label:'Utfylt av', req:true, help:'Navn og rolle på den eller de som har utarbeidet vurderingen.'},
+    {id:'dpo', type:'text', label:'Personvernombud', req:false, help:'Navn på personvernombudet som er rådført. Obligatorisk å rådføre seg med ombudet der et slikt er utnevnt.'},
+    {id:'date', type:'date', label:'Dato for vurderingen', req:true, help:''},
+    {id:'version', type:'text', label:'Versjon', req:false, help:'F.eks. 1.0. Øk versjonen ved hver revisjon.'}
+  ]},
+  {id:'screening', title:'Behov for DPIA', art:'Art. 35 (1) og (3)', intro:'Kartlegg om behandlingen sannsynligvis innebærer høy risiko. Treffer behandlingen to eller flere av kriteriene fra Personvernrådet (EDPB), skal det som hovedregel gjennomføres en DPIA.', fields:[
+    {id:'criteria', type:'checks', label:'Hvilke kriterier treffer behandlingen?', req:false, options:CRITERIA, rerender:true, help:'Kryss av for alle som passer. Bruk heller ett for mye enn ett for lite.'},
+    {id:'list', type:'radio', label:'Står behandlingen på Datatilsynets liste over behandlinger som alltid krever DPIA?', req:true, options:['Ja','Nei','Usikker'], help:'Datatilsynets liste omfatter blant annet storskala behandling av lokasjonsdata, overvåking av ansatte, innovativ teknologi og behandling av biometri.'},
+    {id:'reason', type:'textarea', label:'Begrunnelse for behovet for DPIA', req:true, ai:true, help:'Forklar kort hvorfor dere gjennomfører (eller ikke trenger å gjennomføre) en DPIA, med henvisning til kriteriene over.'}
+  ]},
+  {id:'description', title:'Systematisk beskrivelse', art:'Art. 35 (7) a', intro:'Beskriv behandlingen slik at en utenforstående forstår hva som skjer med personopplysningene, fra innsamling til sletting.', fields:[
+    {id:'purpose', type:'textarea', label:'Formål med behandlingen', req:true, ai:true, help:'Hva skal oppnås, og hvorfor er det nødvendig å behandle personopplysninger for å oppnå det?'},
+    {id:'flow', type:'textarea', label:'Beskrivelse av behandlingen og dataflyten', req:true, ai:true, help:'Hvordan samles opplysningene inn, hvor lagres de, hvem får tilgang, og hvordan brukes de? Beskriv gjerne steg for steg.'},
+    {id:'subjects', type:'textarea', label:'Hvem er de registrerte?', req:true, ai:true, help:'Kategorier av personer opplysningene gjelder, f.eks. brukere, pasienter, ansatte, pårørende, barn.'},
+    {id:'scope', type:'text', label:'Omfang', req:true, help:'Omtrentlig antall registrerte, datamengde, varighet og geografisk utstrekning.'},
+    {id:'categories', type:'textarea', label:'Kategorier av personopplysninger', req:true, ai:true, help:'List opp hvilke typer opplysninger som behandles, f.eks. navn, fødselsnummer, kontaktinfo, lokasjon, logger.'},
+    {id:'special', type:'radio', label:'Behandles særlige kategorier personopplysninger eller opplysninger om straffbare forhold?', req:true, options:['Ja','Nei'], rerender:true, help:'Art. 9 og 10: helse, etnisitet, politisk syn, religion, fagforening, genetikk, biometri for identifisering, seksualitet, straffedommer.'},
+    {id:'specialWhich', type:'textarea', label:'Hvilke særlige kategorier, og hvorfor?', req:true, show:s=>s.description.special==='Ja', help:'Beskriv hvilke opplysninger dette gjelder og hvorfor de er nødvendige.'},
+    {id:'sources', type:'textarea', label:'Kilder til opplysningene', req:true, help:'Fra den registrerte selv, andre systemer, offentlige registre, sensorer, tredjeparter?'},
+    {id:'recipients', type:'textarea', label:'Mottakere og databehandlere', req:true, ai:true, help:'Hvem utleveres opplysningene til, og hvilke leverandører behandler dem på vegne av virksomheten?'},
+    {id:'transfer', type:'radio', label:'Overføres opplysninger til land utenfor EU/EØS?', req:true, options:['Ja','Nei','Usikker'], rerender:true, help:'Inkluderer tilgang fra land utenfor EØS, f.eks. support eller drift fra en underleverandør.'},
+    {id:'transferBasis', type:'textarea', label:'Overføringsgrunnlag og vurdering', req:true, show:s=>s.description.transfer && s.description.transfer!=='Nei', help:'F.eks. adekvansbeslutning, EU-US Data Privacy Framework eller standardavtaler (SCC) med overføringsvurdering (TIA).'},
+    {id:'retention', type:'textarea', label:'Lagringstid og sletting', req:true, ai:true, help:'Hvor lenge lagres opplysningene, hva styrer lagringstiden, og hvordan slettes eller anonymiseres de?'},
+    {id:'tech', type:'textarea', label:'Systemer og teknologi', req:true, ai:true, help:'Hvilke systemer, plattformer og teknologier brukes? Nevn særlig ny teknologi som KI, sensorer eller skytjenester.'}
+  ]},
+  {id:'legal', title:'Rettslig grunnlag og nødvendighet', art:'Art. 35 (7) b', intro:'Vurder om behandlingen har et gyldig behandlingsgrunnlag, og om den er nødvendig og forholdsmessig sett opp mot formålet.', fields:[
+    {id:'basis', type:'select', label:'Behandlingsgrunnlag etter art. 6 (1)', req:true, options:['','a) Samtykke','b) Avtale','c) Rettslig forpliktelse','d) Vitale interesser','e) Allmennhetens interesse eller offentlig myndighet','f) Berettiget interesse'], help:'Velg det grunnlaget som faktisk bærer behandlingen.'},
+    {id:'basisDetail', type:'textarea', label:'Supplerende rettsgrunnlag og begrunnelse', req:true, ai:true, help:'For c) og e) kreves supplerende rettsgrunnlag i lov eller forskrift. For f) skal interesseavveiningen beskrives.'},
+    {id:'art9', type:'textarea', label:'Unntak etter art. 9 (2)', req:true, ai:true, show:s=>s.description.special==='Ja', help:'Hvilket unntak fra forbudet mot å behandle særlige kategorier gjelder, og hvilket supplerende rettsgrunnlag?'},
+    {id:'necessity', type:'textarea', label:'Nødvendighet og forholdsmessighet', req:true, ai:true, help:'Kan formålet nås med mindre inngripende midler? Står inngrepet i personvernet i forhold til nytten?'},
+    {id:'minimisation', type:'textarea', label:'Dataminimering og formålsbegrensning', req:true, ai:true, help:'Hvordan sikres det at bare nødvendige opplysninger behandles, og at de ikke brukes til nye, uforenlige formål?'},
+    {id:'accuracy', type:'textarea', label:'Riktighet og kvalitet', req:false, ai:true, help:'Hvordan sikres det at opplysningene er korrekte og oppdaterte?'},
+    {id:'info', type:'textarea', label:'Informasjon til de registrerte', req:true, ai:true, help:'Hvordan og når informeres de registrerte (art. 13 og 14)? Er informasjonen tilpasset målgruppen?'},
+    {id:'rights', type:'textarea', label:'Ivaretakelse av de registrertes rettigheter', req:true, ai:true, help:'Innsyn, retting, sletting, begrensning, protest og dataportabilitet. Hvordan håndteres henvendelser i praksis?'},
+    {id:'dpa', type:'radio', label:'Er det inngått databehandleravtaler med alle databehandlere?', req:true, options:['Ja','Nei','Under arbeid','Ikke aktuelt'], help:'Art. 28 krever skriftlig avtale med alle som behandler personopplysninger på vegne av virksomheten.'}
+  ]},
+  {id:'involvement', title:'Involvering', art:'Art. 35 (2) og (9)', intro:'Dokumenter hvem som er rådført. Personvernombudets råd skal innhentes, og de registrertes synspunkter skal innhentes der det er hensiktsmessig.', fields:[
+    {id:'dpoAdvice', type:'textarea', label:'Personvernombudets råd', req:true, help:'Hva rådet personvernombudet, og hvordan er rådene fulgt opp? Skriv «Ikke utnevnt» hvis virksomheten ikke har ombud.'},
+    {id:'subjectsViews', type:'textarea', label:'De registrertes synspunkter', req:true, ai:true, help:'Hvordan er de registrerte eller deres representanter (brukerråd, tillitsvalgte, pårørende) involvert? Hvis ikke, begrunn hvorfor.'},
+    {id:'others', type:'textarea', label:'Andre involverte', req:false, help:'F.eks. informasjonssikkerhet, IT, leverandør, jurist, fagpersoner.'}
+  ]},
+  {id:'risks', title:'Risikovurdering', art:'Art. 35 (7) c og d', kind:'risks', intro:'Vurder risiko for de registrertes rettigheter og friheter, ikke for virksomheten. For hver risiko vurderer du sannsynlighet og konsekvens før og etter tiltak.', fields:[]},
+  {id:'conclusion', title:'Konklusjon og godkjenning', art:'Art. 35 (7) d og art. 36', intro:'Oppsummer vurderingen av restrisiko. Er restrisikoen fortsatt høy etter tiltak, må Datatilsynet rådspørres før behandlingen starter (forhåndsdrøfting).', fields:[
+    {id:'residual', type:'select', label:'Samlet restrisiko etter tiltak', req:true, options:['','Lav','Moderat','Høy','Svært høy'], rerender:true, help:''},
+    {id:'prior', type:'radio', label:'Er forhåndsdrøfting med Datatilsynet nødvendig?', req:true, options:['Ja','Nei'], help:'Ja dersom restrisikoen er høy og tiltakene ikke reduserer den tilstrekkelig.'},
+    {id:'conclusion', type:'textarea', label:'Konklusjon', req:true, ai:true, help:'Kan behandlingen gjennomføres? På hvilke vilkår? Henvis til de viktigste risikoene og tiltakene.'},
+    {id:'plan', type:'textarea', label:'Oppfølging og tiltaksplan', req:false, ai:true, help:'Hvem gjør hva, og innen når? Hvordan følges tiltakene opp?'},
+    {id:'review', type:'date', label:'Neste planlagte gjennomgang', req:true, help:'En DPIA er et levende dokument og skal gjennomgås ved endringer og jevnlig.'},
+    {id:'approver', type:'text', label:'Godkjent av (navn og rolle)', req:true, help:'Den som har myndighet til å akseptere restrisikoen på vegne av virksomheten.'},
+    {id:'approvedDate', type:'date', label:'Dato for godkjenning', req:false, help:''}
+  ]},
+  {id:'report', title:'Rapport', art:'Word (.docx)', kind:'report', intro:'Kontroller at alt er besvart, la KI lage et utkast til sammendrag, og last ned rapporten som Word-dokument.', fields:[
+    {id:'summary', type:'textarea', label:'Sammendrag', req:true, ai:true, help:'Kort oppsummering for ledelsen: hva behandlingen gjelder, de viktigste risikoene, tiltakene og konklusjonen. Ca. 150–250 ord.'}
+  ]}
+];
+
+function blankState(){
+  const s={meta:{}, screening:{criteria:[]}, description:{}, legal:{}, involvement:{}, risks:[], conclusion:{}, report:{}, aiUsed:{}, example:false};
+  s.meta.date=new Date().toISOString().slice(0,10); s.meta.version='1.0';
+  return s;
+}
+function isVisible(f,s){ return !f.show || f.show(s); }
+function filled(v){ return Array.isArray(v) ? v.length>0 : String(v??'').trim()!==''; }
+function riskComplete(r){ return filled(r.title)&&filled(r.desc)&&r.s&&r.k&&filled(r.measures)&&r.rs&&r.rk; }
+function sectionStatus(sec,s){
+  if(sec.kind==='risks'){
+    const total=Math.max(1,s.risks.length), done=s.risks.filter(riskComplete).length;
+    return {total, done: s.risks.length?done:0, missing: s.risks.length? s.risks.filter(r=>!riskComplete(r)).map((r,i)=>'R'+(s.risks.indexOf(r)+1)+' er ikke fullstendig') : ['Ingen risikoer er registrert']};
+  }
+  const req=sec.fields.filter(f=>f.req&&isVisible(f,s));
+  const miss=req.filter(f=>!filled(s[sec.id][f.id]));
+  return {total:req.length, done:req.length-miss.length, missing:miss.map(f=>f.label)};
+}
+function overall(s){ let t=0,d=0; for(const sec of SECTIONS){const st=sectionStatus(sec,s); t+=st.total; d+=st.done;} return {t,d,complete:t===d}; }
+function maxResidual(s){ return s.risks.reduce((m,r)=>Math.max(m,riskLevel(r.rs,r.rk)),0); }
+function fmtDate(d){ if(!d) return ''; const [y,m,dd]=d.split('-'); return dd&&m&&y?`${+dd}.${+m}.${y}`:d; }
+
+/* ---------- Minimal DOCX writer (stored ZIP + WordprocessingML) ---------- */
+const CRC_T=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC_T[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function zip(files){
+  const enc=new TextEncoder(), parts=[], central=[]; let off=0;
+  const now=new Date(), dt=((now.getHours()<<11)|(now.getMinutes()<<5)|(now.getSeconds()>>1))&0xFFFF, dd=(((now.getFullYear()-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate())&0xFFFF;
+  for(const [name,content] of files){
+    const nb=enc.encode(name), data=typeof content==='string'?enc.encode(content):content, crc=crc32(data);
+    const h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(8,0,true);h.setUint16(10,dt,true);h.setUint16(12,dd,true);
+    h.setUint32(14,crc,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,nb.length,true);h.setUint16(28,0,true);
+    parts.push(new Uint8Array(h.buffer),nb,data);
+    const c=new DataView(new ArrayBuffer(46));
+    c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(10,0,true);c.setUint16(12,dt,true);c.setUint16(14,dd,true);
+    c.setUint32(16,crc,true);c.setUint32(20,data.length,true);c.setUint32(24,data.length,true);c.setUint16(28,nb.length,true);
+    c.setUint32(42,off,true);
+    central.push(new Uint8Array(c.buffer),nb);
+    off+=30+nb.length+data.length;
+  }
+  const csize=central.reduce((a,b)=>a+b.length,0);
+  const e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,csize,true);e.setUint32(16,off,true);
+  const all=[...parts,...central,new Uint8Array(e.buffer)], out=new Uint8Array(all.reduce((a,b)=>a+b.length,0));
+  let p=0; for(const a of all){out.set(a,p);p+=a.length;} return out;
+}
+const XE=s=>String(s??'').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const W={
+  r(t,o={}){let p='';if(o.b)p+='<w:b/>';if(o.i)p+='<w:i/>';if(o.color)p+=`<w:color w:val="${o.color}"/>`;if(o.sz)p+=`<w:sz w:val="${o.sz}"/><w:szCs w:val="${o.sz}"/>`;if(o.font)p+=`<w:rFonts w:ascii="${o.font}" w:hAnsi="${o.font}"/>`;
+    return `<w:r>${p?`<w:rPr>${p}</w:rPr>`:''}<w:t xml:space="preserve">${XE(t)}</w:t></w:r>`;},
+  p(runs,o={}){let pp='';if(o.style)pp+=`<w:pStyle w:val="${o.style}"/>`;if(o.keep)pp+='<w:keepNext/>';
+    if(o.spaceAfter!=null||o.spaceBefore!=null)pp+=`<w:spacing${o.spaceBefore!=null?` w:before="${o.spaceBefore}"`:''}${o.spaceAfter!=null?` w:after="${o.spaceAfter}"`:''}/>`;
+    if(o.ind)pp+=`<w:ind w:left="${o.ind}" w:hanging="${o.hang||0}"/>`;if(o.jc)pp+=`<w:jc w:val="${o.jc}"/>`;
+    if(o.shade)pp+=`<w:shd w:val="clear" w:color="auto" w:fill="${o.shade}"/>`;if(o.border)pp+=`<w:pBdr><w:left w:val="single" w:sz="18" w:space="8" w:color="${o.border}"/></w:pBdr>`;
+    const rr=Array.isArray(runs)?runs.join(''):(typeof runs==='string'&&runs.startsWith('<w:')?runs:W.r(runs));
+    return `<w:p>${pp?`<w:pPr>${pp}</w:pPr>`:''}${rr}</w:p>`;},
+  h(level,t){return W.p(W.r(t),{style:'Heading'+level,keep:true});},
+  text(t,o={}){ // multi-line text with "- " bullets
+    const lines=String(t??'').replace(/\r/g,'').split('\n'); const out=[];
+    for(const raw of lines){const l=raw.trimEnd(); if(!l.trim()){continue;}
+      const m=l.match(/^\s*(?:[-•*]|\d+[.)])\s+(.*)$/);
+      if(m) out.push(W.p([W.r((/^\s*\d/.test(l)?l.match(/^\s*(\d+[.)])/)[1]:'•')+'\t'),W.r(m[1],o)],{style:'ListText'}));
+      else out.push(W.p(W.r(l,o),{style:o.style}));}
+    if(!out.length) out.push(W.p(W.r('Ikke besvart.',{i:true,color:'8A94A3'})));
+    return out.join('');},
+  pageBreak(){return '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';},
+  table(rows,widths,o={}){
+    const total=widths.reduce((a,b)=>a+b,0);
+    const bc=o.borderColor||'D5DCE3';
+    let x=`<w:tbl><w:tblPr><w:tblW w:w="${total}" w:type="dxa"/><w:tblLayout w:type="fixed"/><w:tblBorders>`+
+      ['top','left','bottom','right','insideH','insideV'].map(b=>`<w:${b} w:val="${o.noBorder?'nil':'single'}" w:sz="4" w:space="0" w:color="${bc}"/>`).join('')+
+      `</w:tblBorders><w:tblCellMar><w:top w:w="${o.pad??70}" w:type="dxa"/><w:left w:w="110" w:type="dxa"/><w:bottom w:w="${o.pad??70}" w:type="dxa"/><w:right w:w="110" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>`+
+      widths.map(w=>`<w:gridCol w:w="${w}"/>`).join('')+'</w:tblGrid>';
+    rows.forEach((row,ri)=>{
+      x+=`<w:tr>${ri===0&&o.header?'<w:trPr><w:tblHeader/><w:cantSplit/></w:trPr>':(o.rowHeight?`<w:trPr><w:trHeight w:val="${o.rowHeight}" w:hRule="exact"/><w:cantSplit/></w:trPr>`:'<w:trPr><w:cantSplit/></w:trPr>')}`;
+      row.forEach((cell,ci)=>{
+        const c=typeof cell==='object'&&cell!==null&&!Array.isArray(cell)?cell:{v:cell};
+        const fill=c.fill||(ri===0&&o.header?'1B5A61':null);
+        const body=c.xml||W.p(W.r(c.v??'',{b:c.b||(ri===0&&o.header),color:c.color||(ri===0&&o.header?'FFFFFF':null),sz:c.sz||o.sz}),{jc:c.jc,spaceAfter:0,spaceBefore:0,keep:o.keep&&ri<rows.length-1});
+        x+=`<w:tc><w:tcPr><w:tcW w:w="${widths[ci]}" w:type="dxa"/>${fill?`<w:shd w:val="clear" w:color="auto" w:fill="${fill}"/>`:''}${c.vAlign?`<w:vAlign w:val="${c.vAlign}"/>`:''}</w:tcPr>${body}</w:tc>`;
+      });
+      x+='</w:tr>';
+    });
+    return x+'</w:tbl>'+W.p('',{spaceAfter:60});
+  }
+};
+const LVL_FILL=['F1F3F5','DDEFE3','F7EDCC','F8E1CB','F4D6D1'], LVL_TXT=['555555','2E6B45','7A5C00','8A4A12','8F2B1F'];
+
+function buildDocx(s,{draft=false}={}){
+  const m=s.meta, B=[], title=m.name||'Uten navn';
+  const qa=(secId,f)=>{const v=s[secId][f.id]; const val=f.type==='date'?fmtDate(v):v;
+    return W.p(W.r(f.label),{style:'Question',keep:true})+W.text(val);};
+  // Cover
+  B.push(W.p(W.r('PERSONVERNKONSEKVENSVURDERING (DPIA)',{b:true,color:'1B5A61',sz:20}),{spaceBefore:2400,spaceAfter:120}));
+  B.push(W.p(W.r(title),{style:'Title'}));
+  B.push(W.p(W.r(m.org||''),{style:'Subtitle'}));
+  if(draft) B.push(W.p(W.r('UTKAST – ikke ferdigstilt',{b:true,color:'A63A2C',sz:24}),{spaceBefore:200,spaceAfter:200}));
+  const st=overall(s);
+  B.push(W.table([
+    ['Behandlingsansvarlig',m.org||''],['Ansvarlig enhet / eier',m.owner||''],['Utfylt av',m.author||''],['Personvernombud',m.dpo||'—'],
+    ['Dato',fmtDate(m.date)],['Versjon',m.version||''],['Status',draft?`Utkast (${st.d} av ${st.t} obligatoriske svar)`:'Ferdigstilt'],
+    ['Samlet restrisiko',s.conclusion.residual||'—'],['Godkjent av',s.conclusion.approver||'—']
+  ].map(([a,b])=>[{v:a,b:true,fill:'EEF2F4'},{v:b}]),[3000,6070],{}));
+  B.push(W.p(W.r('Vurderingen er utarbeidet etter personvernforordningen (GDPR) artikkel 35 og Datatilsynets veiledning om vurdering av personvernkonsekvenser.',{i:true,color:'56657A',sz:18}),{spaceBefore:400}));
+  B.push(W.pageBreak());
+  // Innhold
+  B.push(W.h(1,'Innhold'));
+  ['Sammendrag','Om vurderingen','Behov for DPIA','Systematisk beskrivelse av behandlingen','Rettslig grunnlag, nødvendighet og forholdsmessighet','Involvering','Risikovurdering','Konklusjon og godkjenning','Vedlegg A: Metode og risikoskala','Vedlegg B: Bruk av KI i utarbeidelsen']
+    .forEach((t,i)=>B.push(W.p([W.r((i<8?(i+1)+'.':'')+'\t'),W.r(t)],{style:'TocLine'})));
+  B.push(W.pageBreak());
+  // 1 Sammendrag
+  B.push(W.h(1,'1. Sammendrag'));
+  B.push(W.text(s.report.summary));
+  // 2 Om
+  B.push(W.h(1,'2. Om vurderingen'));
+  B.push(W.p(W.r('Denne personvernkonsekvensvurderingen (DPIA) beskriver behandlingen av personopplysninger i «'+title+'», vurderer nødvendighet og forholdsmessighet, og identifiserer risikoer for de registrertes rettigheter og friheter med tilhørende tiltak.')));
+  B.push(W.table(SECTIONS[0].fields.map(f=>[{v:f.label,b:true,fill:'EEF2F4'},{v:(f.type==='date'?fmtDate(m[f.id]):m[f.id])||'—'}]),[3400,5670]));
+  // 3 Behov
+  const sc=s.screening, hits=CRITERIA.filter(c=>(sc.criteria||[]).includes(c.id));
+  B.push(W.h(1,'3. Behov for DPIA'));
+  B.push(W.p(W.r(`Behandlingen er vurdert mot de ni kriteriene i Personvernrådets (EDPB) retningslinjer. Behandlingen treffer ${hits.length} av 9 kriterier.`+(hits.length>=2?' Det er derfor som hovedregel påkrevd å gjennomføre en DPIA.':''))));
+  B.push(W.table([['Kriterium','Treffer'],...CRITERIA.map(c=>{const on=(sc.criteria||[]).includes(c.id);return [{v:c.label},{v:on?'Ja':'Nei',b:on,color:on?'8F2B1F':'6B7685',jc:'center'}];})],[7570,1500],{header:true}));
+  B.push(W.p(W.r('Datatilsynets liste over behandlinger som alltid krever DPIA'),{style:'Question',keep:true})+W.text(sc.list));
+  B.push(qa('screening',SECTIONS[1].fields[2]));
+  // 4 Beskrivelse
+  B.push(W.h(1,'4. Systematisk beskrivelse av behandlingen'));
+  SECTIONS[2].fields.filter(f=>isVisible(f,s)).forEach(f=>B.push(qa('description',f)));
+  // 5 Legal
+  B.push(W.h(1,'5. Rettslig grunnlag, nødvendighet og forholdsmessighet'));
+  SECTIONS[3].fields.filter(f=>isVisible(f,s)).forEach(f=>B.push(qa('legal',f)));
+  // 6 Involvering
+  B.push(W.h(1,'6. Involvering'));
+  SECTIONS[4].fields.forEach(f=>B.push(qa('involvement',f)));
+  // 7 Risiko
+  B.push(W.h(1,'7. Risikovurdering'));
+  B.push(W.p(W.r('Risiko er vurdert ut fra de registrertes perspektiv. Sannsynlighet og konsekvens er vurdert på en firedelt skala før og etter tiltak (se vedlegg A).')));
+  const matrix=(useRes)=>{
+    const rows=[];
+    for(let k=4;k>=1;k--){
+      const row=[{v:CONSEQUENCE[k],sz:16,b:true,fill:'F4F6F7',vAlign:'center'}];
+      for(let sv=1;sv<=4;sv++){const lv=riskLevel(sv,k);
+        const ids=s.risks.map((r,i)=>({i,r})).filter(({r})=>(useRes?(+r.rs===sv&&+r.rk===k):(+r.s===sv&&+r.k===k))).map(({i})=>'R'+(i+1));
+        row.push({v:ids.join(' '),b:true,fill:LVL_FILL[lv],color:LVL_TXT[lv],jc:'center',vAlign:'center',sz:18});}
+      rows.push(row);
+    }
+    rows.push([{v:'',fill:'FFFFFF'},...[1,2,3,4].map(sv=>({v:LIKELIHOOD[sv],sz:16,b:true,fill:'F4F6F7',jc:'center'}))]);
+    return W.table(rows,[1670,1850,1850,1850,1850],{rowHeight:620,pad:40,keep:true});
+  };
+  B.push(W.h(2,'7.1 Risikobilde før og etter tiltak'));
+  B.push(W.p(W.r('Før tiltak',{b:true}),{keep:true,spaceAfter:60})); B.push(matrix(false));
+  B.push(W.p(W.r('Etter tiltak (restrisiko)',{b:true}),{keep:true,spaceAfter:60})); B.push(matrix(true));
+  B.push(W.p(W.r('Rader: konsekvens. Kolonner: sannsynlighet.',{i:true,color:'56657A',sz:16})));
+  B.push(W.h(2,'7.2 Oversikt over risikoer'));
+  const lvCell=(lv)=>({v:LEVELS[lv]||'—',b:true,fill:LVL_FILL[lv],color:LVL_TXT[lv],jc:'center',sz:18});
+  B.push(W.table([['ID','Risiko','Før','Etter'],...s.risks.map((r,i)=>[{v:'R'+(i+1),b:true},{v:r.title||''},lvCell(riskLevel(r.s,r.k)),lvCell(riskLevel(r.rs,r.rk))])],[800,5470,1400,1400],{header:true,sz:19}));
+  B.push(W.h(2,'7.3 Risikoer og tiltak'));
+  if(!s.risks.length) B.push(W.text(''));
+  s.risks.forEach((r,i)=>{
+    B.push(W.h(3,`R${i+1}. ${r.title||'Uten tittel'}`));
+    B.push(W.p(W.r('Beskrivelse av risikoen',{b:true}),{keep:true,spaceAfter:40})+W.text(r.desc));
+    B.push(W.table([
+      [{v:'',fill:'EEF2F4'},{v:'Sannsynlighet',b:true,fill:'EEF2F4'},{v:'Konsekvens',b:true,fill:'EEF2F4'},{v:'Risikonivå',b:true,fill:'EEF2F4'}],
+      [{v:'Før tiltak',b:true},{v:LIKELIHOOD[r.s]||'—'},{v:CONSEQUENCE[r.k]||'—'},lvCell(riskLevel(r.s,r.k))],
+      [{v:'Etter tiltak',b:true},{v:LIKELIHOOD[r.rs]||'—'},{v:CONSEQUENCE[r.rk]||'—'},lvCell(riskLevel(r.rs,r.rk))]
+    ],[1900,2390,2390,2390],{sz:19}));
+    B.push(W.p(W.r('Tiltak',{b:true}),{keep:true,spaceAfter:40})+W.text(r.measures));
+    if(filled(r.owner)) B.push(W.p([W.r('Ansvarlig for tiltak: ',{b:true}),W.r(r.owner)]));
+  });
+  // 8 Konklusjon
+  const c=s.conclusion;
+  B.push(W.h(1,'8. Konklusjon og godkjenning'));
+  B.push(W.table([
+    [{v:'Samlet restrisiko',b:true,fill:'EEF2F4'},(()=>{const lv=LEVELS.indexOf(c.residual);return lv>0?lvCell(lv):{v:'—'};})()],
+    [{v:'Forhåndsdrøfting med Datatilsynet (art. 36)',b:true,fill:'EEF2F4'},{v:c.prior||'—'}],
+    [{v:'Neste planlagte gjennomgang',b:true,fill:'EEF2F4'},{v:fmtDate(c.review)||'—'}]
+  ],[4200,4870]));
+  SECTIONS[6].fields.filter(f=>['conclusion','plan'].includes(f.id)).forEach(f=>B.push(qa('conclusion',f)));
+  B.push(W.h(2,'Godkjenning'));
+  B.push(W.p(W.r('Behandlingsansvarlig har vurdert restrisikoen og godkjenner at behandlingen gjennomføres på de vilkårene som er beskrevet i denne vurderingen.')));
+  B.push(W.table([
+    [{v:'Navn og rolle',b:true,fill:'EEF2F4'},{v:'Dato',b:true,fill:'EEF2F4'},{v:'Signatur',b:true,fill:'EEF2F4'}],
+    [{v:c.approver||''},{v:fmtDate(c.approvedDate)||''},{v:''}]
+  ],[4000,2000,3070],{pad:200}));
+  // Vedlegg A
+  B.push(W.pageBreak());
+  B.push(W.h(1,'Vedlegg A: Metode og risikoskala'));
+  B.push(W.p(W.r('Risiko er produktet av sannsynlighet (1–4) og konsekvens (1–4). Produkt 1–3 gir lav risiko, 4–6 moderat, 8–9 høy og 12–16 svært høy risiko.')));
+  B.push(W.table([['Verdi','Sannsynlighet','Konsekvens for de registrerte'],
+    ['1','Lite sannsynlig','Ubetydelig: små ulemper som lett kan håndteres'],['2','Mulig','Begrenset: ulemper som kan håndteres med noe innsats'],
+    ['3','Sannsynlig','Alvorlig: betydelige konsekvenser som er vanskelige å håndtere'],['4','Svært sannsynlig','Svært alvorlig: varige eller uopprettelige konsekvenser']],[900,2400,5770],{header:true,sz:19}));
+  // Vedlegg B
+  B.push(W.h(1,'Vedlegg B: Bruk av KI i utarbeidelsen'));
+  const used=Object.keys(s.aiUsed||{}).filter(k=>s.aiUsed[k]);
+  B.push(W.p(W.r('Verktøyet DPIA-los har tilbudt forslag fra en språkmodell (Claude). Forslag ble bare tatt inn etter at brukeren aktivt valgte det, og brukeren er ansvarlig for innholdet. Behandlingsansvarlig har ansvaret for vurderingen.')));
+  if(used.length){
+    const labels=used.map(k=>{const [sid,fid]=k.split('.');const sec=SECTIONS.find(x=>x.id===sid);if(sid==='risks')return 'Risikovurdering: '+(fid==='suggest'?'forslag til risikoer':fid);const f=sec&&sec.fields.find(x=>x.id===fid);return sec&&f?`${sec.title}: ${f.label}`:k;});
+    B.push(W.p(W.r('Felter der KI-forslag er tatt i bruk og deretter kvalitetssikret:')));
+    labels.forEach(l=>B.push(W.p([W.r('•\t'),W.r(l)],{style:'ListText'})));
+  } else B.push(W.p(W.r('KI-forslag er ikke tatt i bruk i teksten i denne rapporten.')));
+
+  const body=B.join('');
+  const doc=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${body}<w:sectPr><w:footerReference w:type="default" r:id="rIdFooter"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1418" w:right="1418" w:bottom="1418" w:left="1418" w:header="709" w:footer="709" w:gutter="0"/><w:titlePg/></w:sectPr></w:body></w:document>`;
+  const footer=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:p><w:pPr><w:pStyle w:val="Footer"/><w:tabs><w:tab w:val="right" w:pos="9070"/></w:tabs></w:pPr>${W.r('DPIA – '+title+(draft?' (utkast)':''))}<w:r><w:tab/></w:r>${W.r('Side ')}<w:fldSimple w:instr="PAGE"><w:r><w:t>1</w:t></w:r></w:fldSimple>${W.r(' av ')}<w:fldSimple w:instr="NUMPAGES"><w:r><w:t>1</w:t></w:r></w:fldSimple></w:p></w:ftr>`;
+  const font='Calibri', head='Cambria';
+  const sty=(id,name,ppr,rpr,extra='')=>`<w:style w:type="paragraph" w:styleId="${id}"><w:name w:val="${name}"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/>${extra}<w:pPr>${ppr}</w:pPr><w:rPr>${rpr}</w:rPr></w:style>`;
+  const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="${font}" w:hAnsi="${font}" w:eastAsia="${font}" w:cs="${font}"/><w:sz w:val="21"/><w:szCs w:val="21"/><w:color w:val="1E2A38"/><w:lang w:val="nb-NO"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>
+<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>
+${sty('Title','Title','<w:spacing w:after="120"/>',`<w:rFonts w:ascii="${head}" w:hAnsi="${head}"/><w:b/><w:sz w:val="52"/><w:color w:val="132235"/>`,'<w:qFormat/>')}
+${sty('Subtitle','Subtitle','<w:spacing w:after="480"/>','<w:sz w:val="28"/><w:color w:val="56657A"/>','<w:qFormat/>')}
+${sty('Heading1','heading 1','<w:keepNext/><w:spacing w:before="360" w:after="140"/><w:pBdr><w:bottom w:val="single" w:sz="6" w:space="4" w:color="C9D3DA"/></w:pBdr><w:outlineLvl w:val="0"/>',`<w:rFonts w:ascii="${head}" w:hAnsi="${head}"/><w:b/><w:sz w:val="32"/><w:color w:val="1B5A61"/>`,'<w:qFormat/>')}
+${sty('Heading2','heading 2','<w:keepNext/><w:spacing w:before="260" w:after="100"/><w:outlineLvl w:val="1"/>',`<w:rFonts w:ascii="${head}" w:hAnsi="${head}"/><w:b/><w:sz w:val="26"/><w:color w:val="132235"/>`,'<w:qFormat/>')}
+${sty('Heading3','heading 3','<w:keepNext/><w:spacing w:before="240" w:after="80"/><w:outlineLvl w:val="2"/>','<w:b/><w:sz w:val="23"/><w:color w:val="1B5A61"/>','<w:qFormat/>')}
+${sty('Question','Spørsmål','<w:keepNext/><w:spacing w:before="200" w:after="60"/>','<w:b/><w:color w:val="132235"/>')}
+${sty('ListText','Liste','<w:spacing w:after="60"/><w:ind w:left="360" w:hanging="280"/><w:tabs><w:tab w:val="left" w:pos="360"/></w:tabs>','')}
+${sty('TocLine','Innholdslinje','<w:spacing w:after="80"/><w:tabs><w:tab w:val="left" w:pos="480"/></w:tabs>','<w:sz w:val="22"/>')}
+${sty('Footer','footer','<w:spacing w:after="0"/>','<w:sz w:val="16"/><w:color w:val="7A8696"/>')}
+</w:styles>`;
+  const ct=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`;
+  const rels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`;
+  const drels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdStyles" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rIdFooter" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/></Relationships>`;
+  const iso=new Date().toISOString().replace(/\.\d+Z$/,'Z');
+  const core=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${XE('DPIA – '+title)}</dc:title><dc:creator>${XE(m.author||'')}</dc:creator><dc:language>nb-NO</dc:language><dcterms:created xsi:type="dcterms:W3CDTF">${iso}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${iso}</dcterms:modified></cp:coreProperties>`;
+  return zip([['[Content_Types].xml',ct],['_rels/.rels',rels],['word/document.xml',doc],['word/_rels/document.xml.rels',drels],['word/styles.xml',styles],['word/footer1.xml',footer],['docProps/core.xml',core]]);
+}
+
+function contextText(s,limit=14000){
+  const out=[];
+  for(const sec of SECTIONS){
+    if(sec.kind==='risks'){ if(s.risks.length){ out.push('## Risikoer'); s.risks.forEach((r,i)=>out.push(`R${i+1} ${r.title||''}: ${r.desc||''} | Før: ${LEVELS[riskLevel(r.s,r.k)]||'ikke vurdert'} | Tiltak: ${r.measures||'ingen'} | Etter: ${LEVELS[riskLevel(r.rs,r.rk)]||'ikke vurdert'}`)); } continue; }
+    const lines=[];
+    for(const f of sec.fields){ if(!isVisible(f,s)) continue; let v=s[sec.id][f.id];
+      if(f.type==='checks') v=(v||[]).map(id=>(CRITERIA.find(c=>c.id===id)||{}).label).filter(Boolean).join('; ');
+      if(filled(v)) lines.push(`${f.label}: ${String(v).trim()}`); }
+    if(lines.length){ out.push('## '+sec.title); out.push(...lines); }
+  }
+  const t=out.join('\n'); return t.length>limit? t.slice(0,limit)+'\n[...]' : (t||'(ingenting er fylt ut ennå)');
+}
+/*CORE-END*/
+
+/* ===================== EXAMPLE ===================== */
+function exampleState(){
+  const s=blankState(); s.example=true;
+  Object.assign(s.meta,{org:'Eksempel kommune',name:'Digitalt tilsyn i hjemmetjenesten',owner:'Helse og omsorg, avdeling hjemmetjenester – virksomhetsleder',author:'Kari Nordmann, rådgiver informasjonssikkerhet',dpo:'Ola Hansen',version:'0.3'});
+  s.screening={criteria:['monitor','sensitive','vulnerable','innovative'],list:'Ja',reason:'Behandlingen innebærer kontinuerlig sensorbasert overvåking i private hjem hos eldre og sårbare brukere, og helseopplysninger behandles. Fire av ni EDPB-kriterier er oppfylt, og behandlingen faller inn under Datatilsynets liste (innovativ teknologi og sårbare registrerte). DPIA er derfor påkrevd.'};
+  Object.assign(s.description,{
+    purpose:'Gi hjemmeboende brukere med behov for tilsyn et tryggere hjem ved at nattlige tilsyn delvis erstattes av digitalt tilsyn. Formålet er å oppdage fall og uvanlig aktivitet raskere, og å redusere unødvendige forstyrrelser om natten.',
+    flow:'- Bevegelsessensorer og døralarm installeres i brukerens bolig etter vedtak.\n- Hendelser sendes kryptert til leverandørens plattform.\n- Ved alarm varsles responssenteret, som vurderer og eventuelt sender ut personell.\n- Hendelseslogger er tilgjengelige for autorisert helsepersonell i fagsystemet.',
+    subjects:'Hjemmeboende brukere av hjemmetjenesten med vedtak om tilsyn, deres pårørende (kontaktinformasjon) og ansatte i responssenteret (logger).',
+    scope:'Ca. 350 brukere i kommunen, løpende behandling, ca. 2 000 hendelser per døgn.',
+    categories:'- Navn, adresse, fødselsnummer\n- Vedtak om tjenester\n- Sensorhendelser med tidspunkt (bevegelse, dør, fall)\n- Alarmhåndtering og journalnotat\n- Kontaktinformasjon til pårørende',
+    special:'Ja', specialWhich:'Helseopplysninger: vedtak, alarmer og aktivitetsmønstre sier noe om brukerens helsetilstand og funksjonsnivå. Dette er nødvendig for å yte forsvarlig helsehjelp.',
+    sources:'Brukeren selv (kartlegging), fagsystemet for helse og omsorg, sensorene i boligen.',
+    recipients:'Responssenteret (interkommunalt), leverandøren av velferdsteknologiplattformen som databehandler, og driftsleverandør for fagsystemet.',
+    transfer:'Nei',
+    retention:'Sensorhendelser slettes etter 90 dager. Hendelser som fører til helsehjelp dokumenteres i journal etter pasientjournalloven.',
+    tech:'Velferdsteknologiplattform levert som skytjeneste i EØS, trådløse sensorer i boligen, integrasjon mot fagsystemet.'
+  });
+  Object.assign(s.legal,{basis:'e) Allmennhetens interesse eller offentlig myndighet',basisDetail:'Helse- og omsorgstjenesteloven § 3-2 og pasient- og brukerrettighetsloven § 2-1 a, jf. pasientjournalloven § 6.'});
+  s.risks=[
+    {id:'r1',title:'Opplevd overvåking og tap av privatliv i eget hjem',desc:'Brukere kan oppleve kontinuerlig sensorovervåking som inngripende og endre atferd i eget hjem.',s:3,k:3,measures:'- Tilsyn bare etter individuell vurdering og samtykke der brukeren har samtykkekompetanse\n- Ingen kamera, kun bevegelses- og dørsensorer\n- Brukeren kan pause tilsynet på dagtid',rs:2,rk:2,owner:'Avdelingsleder hjemmetjenester'},
+    {id:'r2',title:'Uautorisert tilgang til hendelseslogger',desc:'Ansatte uten tjenstlig behov kan se aktivitetsmønstre for brukere.',s:2,k:3,measures:'- Rollebasert tilgangsstyring\n- Logging og månedlig stikkprøvekontroll av oppslag',rs:1,rk:3,owner:'Systemansvarlig'},
+    {id:'r3',title:'',desc:'',s:0,k:0,measures:'',rs:0,rk:0,owner:''}
+  ];
+  return s;
+}
+
+/* ===================== APP (DOM) ===================== */
+const KEY='dpia-los:v1';
+let S=load(), step=loadStep(), sample=null, downloads=null, matrixMode='before', chatTurns=[], aiCtl={};
+function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); return Object.assign(blankState(),o);} }catch(e){} return blankState(); }
+function loadStep(){ try{ return +(localStorage.getItem(KEY+':step')||0);}catch(e){return 0;} }
+let saveT;
+function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(KEY,JSON.stringify(S)); localStorage.setItem(KEY+':step',String(step)); const t=new Date(); $('#saveState').textContent='Lagret i nettleseren '+t.toTimeString().slice(0,5);}catch(e){ $('#saveState').textContent='Kunne ikke lagre lokalt'; } },300); }
+const $=q=>document.querySelector(q);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(msg){ const h=$('#toastHost'); h.innerHTML=`<div class="toast" role="status">${esc(msg)}</div>`; clearTimeout(toast.t); toast.t=setTimeout(()=>h.innerHTML='',3200); }
+const ICON={check:'<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  dot:'<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="2.5" fill="currentColor"/></svg>'};
+
+function aiErr(e){ const c=e&&e.code; return ({not_granted:'Du har ikke gitt tillatelse til KI i denne visningen. Last siden på nytt for å bli spurt igjen.',rate_limited:'For mange KI-forespørsler akkurat nå. Vent litt og prøv igjen.',
+  prompt_too_large:'Det er for mye tekst å sende. Prøv å korte ned svarene.',refused:'KI-en avslo forespørselen. Prøv å omformulere.',invalid_json:'KI-svaret hadde feil format. Prøv igjen.',
+  sampling_disabled:'KI er slått av for kontoen din.',session_expired:'Økten er utløpt. Last siden på nytt.',cancelled:'Stoppet.'})[c]||'KI-forespørselen mislyktes. Prøv igjen om litt.'; }
+const ROLE='Du er en erfaren personvernrådgiver i Norge med inngående kjennskap til personvernforordningen (GDPR), personopplysningsloven og Datatilsynets veiledning om vurdering av personvernkonsekvenser (DPIA). Du hjelper en saksbehandler med å fylle ut en DPIA. Skriv på norsk bokmål.';
+
+/* ---------- Render ---------- */
+function stepsList(){ return [{id:'start',title:'Start'},...SECTIONS]; }
+function renderSteps(){
+  const el=$('#steps'); const items=stepsList();
+  el.innerHTML='<div class="eyebrow">Steg i vurderingen</div>'+items.map((sec,i)=>{
+    let cls='step'+(i===step?' on':''), sub='';
+    if(i===0){ sub='Oversikt og personvern'; }
+    else { const st=sectionStatus(sec,S); if(st.total&&st.done===st.total) cls+=' done'; sub=sec.kind==='risks'?`${S.risks.length} risikoer`:`${st.done} av ${st.total} besvart`; }
+    return `<button class="${cls}" data-step="${i}" type="button" ${i===step?'aria-current="step"':''}><span class="dot">${i===0?'·':(cls.includes('done')?ICON.check:i)}</span><span class="lbl">${esc(sec.title)}<span class="sub">${sub}</span></span></button>`;
+  }).join('')+`<div class="trust-mini"><div><b>Dine data blir her.</b> Svarene lagres bare i denne nettleseren. KI brukes kun når du trykker på en KI-knapp.</div><button class="btn small" type="button" data-act="trust">Les mer</button></div>`;
+}
+function focusStep(){ if(window.innerWidth>860) return; const on=document.querySelector('.step.on'); if(on){ const nav=$('#steps'); nav.scrollLeft=on.offsetLeft-nav.clientWidth/2+on.clientWidth/2; } }
+function renderProgress(){
+  const o=overall(S); $('#barFill').style.width=(o.t?Math.round(o.d/o.t*100):0)+'%';
+  $('#barText').textContent=`${o.d} av ${o.t} obligatoriske svar`;
+  $('#docName').textContent=S.meta.name||'Personvernkonsekvensvurdering';
+}
+function render(keepScroll){
+  renderSteps(); renderProgress(); focusStep();
+  const main=$('#main');
+  const banner=S.example?`<div class="example-banner"><b>Eksempeldata.</b><span>Dette er en oppdiktet vurdering som viser hvordan verktøyet fungerer.</span><button class="btn small" type="button" data-act="reset-ask">Start en tom vurdering</button></div>`:'';
+  if(step===0) main.innerHTML=banner+startView();
+  else { const sec=SECTIONS[step-1]; main.innerHTML=banner+sectionView(sec); }
+  if(!keepScroll) window.scrollTo({top:0});
+}
+function startView(){
+  const o=overall(S), started=o.d>0||S.risks.length>0;
+  return `<section class="card hero">
+    <span class="eyebrow">Personvernkonsekvensvurdering · GDPR art. 35</span>
+    <h1>Gjennomfør en DPIA steg for steg, med en rådgiver ved siden av deg</h1>
+    <p class="lead">DPIA-los leder deg gjennom spørsmålene Datatilsynet forventer at en vurdering besvarer. KI kan foreslå tekst, finne risikoer og peke på mangler, men du bestemmer alltid hva som står i rapporten. Når alt er besvart, laster du ned en ferdig Word-rapport.</p>
+    <div class="cta">
+      <button class="btn primary" type="button" data-step="1">${started?'Fortsett vurderingen':'Start vurderingen'}</button>
+      ${S.example?'':`<button class="btn" type="button" data-act="example">Se et utfylt eksempel</button>`}
+      <button class="btn ghost" type="button" data-act="import">Åpne lagret vurdering (.json)</button>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+    </div>
+  </section>
+  <div class="how">
+    <div class="card"><span class="eyebrow">1 · Beskriv</span><b>Svar på strukturerte spørsmål</b><p>Spørsmålene følger kravene i art. 35 (7): beskrivelse, nødvendighet, risiko og tiltak.</p></div>
+    <div class="card"><span class="eyebrow">2 · Vurder</span><b>Få hjelp av KI der du trenger det</b><p>Be om tekstforslag, forslag til risikoer og en faglig gjennomgang av hver del.</p></div>
+    <div class="card"><span class="eyebrow">3 · Dokumenter</span><b>Last ned rapporten i Word</b><p>Rapporten har risikomatrise, tiltak, godkjenning og en oversikt over hvor KI er brukt.</p></div>
+  </div>
+  <section class="card trust" id="trustCard">
+    <h2 style="font-size:20px">Slik behandles opplysningene du skriver inn</h2>
+    <ul>
+      <li>${svgI('lock')}<div><b>Lagres bare i din nettleser</b><span>Svarene lagres lokalt på denne enheten. Ingen andre ser dem, og de sendes ikke til noen database. Ta gjerne en sikkerhetskopi som .json fra rapportsteget.</span></div></li>
+      <li>${svgI('spark')}<div><b>KI brukes bare når du ber om det</b><span>Når du trykker på en KI-knapp, sendes svarene i vurderingen til Claude via din egen Claude-konto. Første gang blir du spurt om tillatelse. Beskriv kategorier av personer, aldri opplysninger om enkeltpersoner.</span></div></li>
+      <li>${svgI('hand')}<div><b>Du godkjenner alt</b><span>KI-forslag vises i lilla kort og settes aldri inn automatisk. Rapporten viser hvilke felter der KI-forslag er tatt i bruk.</span></div></li>
+      <li>${svgI('scale')}<div><b>Bygget på regelverket</b><span>Struktur og kriterier følger GDPR art. 35, EDPBs retningslinjer og Datatilsynets veiledning. Verktøyet er en støtte og erstatter ikke juridisk rådgivning eller personvernombudets råd.</span></div></li>
+    </ul>
+  </section>
+  <section class="card trust">
+    <h2 style="font-size:20px">Dette går du gjennom</h2>
+    <div class="outline">${SECTIONS.map((sec,i)=>{const st=sectionStatus(sec,S);return `<div><span class="n">${i+1}</span><span>${esc(sec.title)}</span><span class="mono" style="color:var(--muted)">${esc(sec.art)}</span></div>`;}).join('')}</div>
+  </section>`;
+}
+function svgI(n){ const p={lock:'<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',hand:'<path d="M5 12l4 4 10-10"/>',scale:'<path d="M12 4v16M6 20h12M4 9l3-5 3 5a3 3 0 0 1-6 0zM14 9l3-5 3 5a3 3 0 0 1-6 0zM7 4h10"/>'}[n];
+  return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`; }
+
+function sectionView(sec){
+  const head=`<div class="sec-head"><span class="art">${esc(sec.art)}</span><h1>${esc(sec.title)}</h1><p>${esc(sec.intro)}</p></div>`;
+  let body='';
+  if(sec.kind==='risks') body=risksView();
+  else if(sec.kind==='report') body=reportView(sec);
+  else {
+    let extra='';
+    if(sec.id==='screening') extra=verdictHTML();
+    if(sec.id==='conclusion') extra=residualHint();
+    body=extra+`<div class="card form">${sec.fields.filter(f=>isVisible(f,S)).map(f=>fieldHTML(sec,f)).join('')}</div>`;
+  }
+  const review=(sec.kind!=='report'&&sec.id!=='meta')?`<div class="review-box" id="review-${sec.id}"></div>`:'';
+  const i=step;
+  const nav=`<div class="sec-nav">
+    <button class="btn" type="button" data-step="${i-1}">Forrige</button>
+    ${(sec.kind!=='report'&&sec.id!=='meta'&&sample)?`<button class="btn ki" type="button" data-act="review" data-sec="${sec.id}"><span class="ki-mark">KI</span> Gjennomgå denne delen</button>`:''}
+    <span class="sp"></span>
+    ${i<SECTIONS.length?`<button class="btn primary" type="button" data-step="${i+1}">Neste: ${esc(SECTIONS[i].title)}</button>`:''}
+  </div>`;
+  return head+body+review+nav;
+}
+function verdictHTML(){
+  const n=(S.screening.criteria||[]).length, v=n>=2?2:n===1?1:0;
+  const t=['Ingen kriterier er krysset av','Ett kriterium treffer','DPIA er som hovedregel påkrevd'][v];
+  const d=['En DPIA er trolig ikke påkrevd, men kan likevel være nyttig. Begrunn vurderingen.','Vurder nøye. Én faktor kan også gi høy risiko, særlig ved sensitive opplysninger eller sårbare grupper.','Behandlingen treffer to eller flere kriterier og vil sannsynligvis innebære høy risiko for de registrerte.'][v];
+  return `<div class="verdict v${v}" id="verdict"><span class="num">${n}<small style="font-size:16px;color:var(--muted)">/9</small></span><div><b>${t}</b><span>${d}</span></div></div>`;
+}
+function residualHint(){
+  const m=maxResidual(S); if(!m) return `<div class="notice">Restrisikoen vurderes i risikoregisteret. Fyll ut risikovurderingen først, så får du et forslag her.</div>`;
+  const prior=m>=3; const cur=S.conclusion.residual;
+  return `<div class="notice ${m>=3?'bad':'ok'}">Høyeste restrisiko i risikoregisteret er <b>${LEVELS[m]}</b>.${prior?' Det tilsier at forhåndsdrøfting med Datatilsynet kan bli nødvendig.':''} ${cur!==LEVELS[m]?`<button class="btn small" type="button" data-act="use-residual" data-v="${LEVELS[m]}">Bruk «${LEVELS[m]}»</button>`:''}</div>`;
+}
+function fieldHTML(sec,f){
+  const v=S[sec.id][f.id], idb=`f-${sec.id}-${f.id}`, star=f.req?'<span class="req" aria-label="obligatorisk">*</span>':'';
+  let ctrl='';
+  if(f.type==='text') ctrl=`<input type="text" id="${idb}" data-sec="${sec.id}" data-f="${f.id}" value="${esc(v)}">`;
+  else if(f.type==='date') ctrl=`<input type="date" id="${idb}" data-sec="${sec.id}" data-f="${f.id}" value="${esc(v)}">`;
+  else if(f.type==='textarea') ctrl=`<textarea id="${idb}" data-sec="${sec.id}" data-f="${f.id}" rows="4">${esc(v)}</textarea>`;
+  else if(f.type==='select') ctrl=`<select id="${idb}" data-sec="${sec.id}" data-f="${f.id}">${f.options.map(o=>`<option value="${esc(o)}" ${o===(v||'')?'selected':''}>${o?esc(o):'Velg …'}</option>`).join('')}</select>`;
+  else if(f.type==='radio') ctrl=`<div class="opts inline" role="radiogroup">${f.options.map((o,i)=>`<label class="opt ${v===o?'sel':''}"><input type="radio" id="${idb}-${i}" name="${idb}" data-sec="${sec.id}" data-f="${f.id}" value="${esc(o)}" ${v===o?'checked':''}><b>${esc(o)}</b></label>`).join('')}</div>`;
+  else if(f.type==='checks') ctrl=`<div class="opts">${f.options.map(o=>{const on=(v||[]).includes(o.id);return `<label class="opt ${on?'sel':''}"><input type="checkbox" id="${idb}-${o.id}" data-sec="${sec.id}" data-f="${f.id}" value="${o.id}" ${on?'checked':''}><span><b>${esc(o.label)}</b><small>${esc(o.desc)}</small></span></label>`;}).join('')}</div>`;
+  const key=sec.id+'.'+f.id;
+  const tools=(f.type==='textarea')?`<div class="field-tools">${(f.ai&&sample)?`<button class="btn ki small" type="button" data-act="suggest" data-sec="${sec.id}" data-f="${f.id}"><span class="ki-mark">KI</span> ${filled(v)?'Forbedre teksten':'Foreslå tekst'}</button>`:''}${S.aiUsed[key]?`<span class="ki-used"><span class="ki-mark">KI</span> KI-forslag brukt</span>`:''}<span class="count">${String(v||'').trim()?String(v).trim().split(/\s+/).length+' ord':''}</span></div>`:'';
+  return `<div class="field"><label class="q" for="${idb}${f.type==='radio'?'-0':''}${f.type==='checks'?'-'+f.options[0].id:''}">${esc(f.label)} ${star}</label>${f.help?`<p class="help">${esc(f.help)}</p>`:''}${ctrl}${tools}<div id="sug-${sec.id}-${f.id}"></div></div>`;
+}
+
+/* ---------- Risks ---------- */
+function risksView(){
+  const list=S.risks.length?S.risks.map((r,i)=>riskHTML(r,i)).join(''):`<div class="card empty"><b>Ingen risikoer registrert ennå</b><span>Legg til den første risikoen selv, eller la KI foreslå risikoer basert på beskrivelsen din.</span></div>`;
+  return `<div class="risk-top">
+    <div style="display:grid;gap:14px;min-width:0">
+      <div class="card" style="padding:16px 18px;display:grid;gap:10px">
+        <b style="font-weight:600">Slik vurderer du risiko</b>
+        <p class="help">Tenk på hva som kan gå galt for de registrerte: tap av kontroll, diskriminering, identitetstyveri, økonomisk tap, skade på omdømme, tap av fortrolighet eller at de ikke får utøvd rettighetene sine. Vurder sannsynlighet og konsekvens før tiltak, beskriv tiltakene, og vurder deretter restrisikoen.</p>
+        <div class="field-tools">
+          <button class="btn primary small" type="button" data-act="add-risk">Legg til risiko</button>
+          ${sample?`<button class="btn ki small" type="button" data-act="suggest-risks"><span class="ki-mark">KI</span> Foreslå risikoer</button>`:''}
+        </div>
+        <div id="riskSugg"></div>
+      </div>
+      <div class="risk-list" id="riskList">${list}</div>
+    </div>
+    <aside class="card matrix-card" id="matrixCard">${matrixHTML()}</aside>
+  </div>`;
+}
+function matrixHTML(){
+  const res=matrixMode==='after'; let cells='';
+  for(let k=4;k>=1;k--){
+    cells+=`<div class="ax">${k}</div>`;
+    for(let s=1;s<=4;s++){ const ids=S.risks.map((r,i)=>({r,i})).filter(({r})=>res?(+r.rs===s&&+r.rk===k):(+r.s===s&&+r.k===k)).map(({i})=>`<span class="chip">R${i+1}</span>`).join('');
+      cells+=`<div class="cell lv${riskLevel(s,k)}" title="${LIKELIHOOD[s]} × ${CONSEQUENCE[k]}: ${LEVELS[riskLevel(s,k)]}">${ids}</div>`; }
+  }
+  cells+=`<div></div>`+[1,2,3,4].map(s=>`<div class="ax">${s}</div>`).join('');
+  return `<div class="matrix-head"><b style="font-weight:600;font-size:14px">Risikomatrise</b><div class="seg" role="group" aria-label="Vis"><button type="button" data-act="mx" data-v="before" class="${!res?'on':''}">Før tiltak</button><button type="button" data-act="mx" data-v="after" class="${res?'on':''}">Etter tiltak</button></div></div>
+  <div class="matrix"><div class="ax yl" style="grid-row:1/5;grid-column:1;display:none"></div>${cells}</div>
+  <div class="axis-cap"><span>Sannsynlighet →</span><span>↑ Konsekvens</span></div>
+  <div class="legend">${[1,2,3,4].map(l=>`<span><i class="lv${l}"></i>${LEVELS[l]}</span>`).join('')}</div>`;
+}
+function riskHTML(r,i){
+  const b=riskLevel(r.s,r.k), a=riskLevel(r.rs,r.rk), id=r.id;
+  const sel=(field,arr,val)=>`<select id="rk-${id}-${field}" data-risk="${id}" data-rf="${field}">${arr.map((t,n)=>`<option value="${n}" ${+val===n?'selected':''}>${n?n+' – '+t:'Velg …'}</option>`).join('')}</select>`;
+  return `<article class="card risk" id="risk-${id}">
+    <div class="risk-h"><span class="rid">R${i+1}</span><input type="text" id="rk-${id}-title" aria-label="Tittel på risiko R${i+1}" placeholder="Kort tittel på risikoen" data-risk="${id}" data-rf="title" value="${esc(r.title)}">
+      <span class="pill lv${b}" id="pb-${id}">Før: ${LEVELS[b]||'—'}</span><span class="pill lv${a}" id="pa-${id}">Etter: ${LEVELS[a]||'—'}</span>
+      <button class="btn ghost small" type="button" data-act="del-risk" data-id="${id}" aria-label="Slett R${i+1}">Slett</button></div>
+    <div class="risk-b">
+      <div class="field"><label class="q" for="rk-${id}-desc">Hva kan skje med de registrerte? <span class="req">*</span></label><textarea id="rk-${id}-desc" rows="3" data-risk="${id}" data-rf="desc">${esc(r.desc)}</textarea></div>
+      <div class="field"><div class="scales">
+        <span class="phase">Før tiltak</span>
+        <label>Sannsynlighet ${sel('s',LIKELIHOOD,r.s)}</label><label>Konsekvens ${sel('k',CONSEQUENCE,r.k)}</label>
+      </div></div>
+      <div class="field"><label class="q" for="rk-${id}-measures">Tiltak <span class="req">*</span></label><p class="help">Tekniske og organisatoriske tiltak som reduserer sannsynligheten eller konsekvensen.</p><textarea id="rk-${id}-measures" rows="3" data-risk="${id}" data-rf="measures">${esc(r.measures)}</textarea>
+        ${sample?`<div class="field-tools"><button class="btn ki small" type="button" data-act="suggest-measures" data-id="${id}"><span class="ki-mark">KI</span> Foreslå tiltak</button>${S.aiUsed['risks.'+id]?'<span class="ki-used"><span class="ki-mark">KI</span> KI-forslag brukt</span>':''}</div>`:''}<div id="sugm-${id}"></div></div>
+      <div class="field"><div class="scales">
+        <span class="phase">Etter tiltak</span>
+        <label>Sannsynlighet ${sel('rs',LIKELIHOOD,r.rs)}</label><label>Konsekvens ${sel('rk',CONSEQUENCE,r.rk)}</label>
+      </div></div>
+      <div class="field"><label class="q" for="rk-${id}-owner">Ansvarlig for tiltakene</label><input type="text" id="rk-${id}-owner" data-risk="${id}" data-rf="owner" value="${esc(r.owner)}"></div>
+    </div></article>`;
+}
+function newRisk(o={}){ return Object.assign({id:'r'+Math.random().toString(36).slice(2,8),title:'',desc:'',s:0,k:0,measures:'',rs:0,rk:0,owner:''},o); }
+
+/* ---------- Report ---------- */
+function reportView(sec){
+  const o=overall(S);
+  const rows=SECTIONS.map((x,i)=>{const st=sectionStatus(x,S), ok=st.total===st.done;
+    return `<div class="status-row"><span class="ic ${ok?'ok':'no'}">${ok?ICON.check:ICON.dot}</span><div><b style="font-weight:500">${esc(x.title)}</b>${ok?'':`<small>Mangler: ${esc(st.missing.slice(0,4).join(', '))}${st.missing.length>4?` og ${st.missing.length-4} til`:''}</small>`}</div>${ok?`<small class="mono" style="color:var(--muted)">${st.done}/${st.total}</small>`:`<button class="btn small" type="button" data-step="${i+1}">Gå til</button>`}</div>`;}).join('');
+  return `<div class="card form">${sec.fields.map(f=>fieldHTML(sec,f)).join('')}</div>
+  <section class="card doc-cta">
+    <h2 style="font-size:20px">Status før rapporten</h2>
+    <div class="status-grid">${rows}</div>
+    ${o.complete?`<div class="notice ok">Alt er besvart. Rapporten kan lastes ned som ferdigstilt.</div>`:`<div class="notice">${o.t-o.d} obligatoriske svar gjenstår. Du kan laste ned et utkast nå. Utkastet merkes tydelig som ikke ferdigstilt.</div>`}
+    <div class="row">
+      <button class="btn primary" type="button" data-act="docx" ${o.complete?'':'disabled'}>Last ned rapport (.docx)</button>
+      <button class="btn" type="button" data-act="docx-draft">Last ned utkast (.docx)</button>
+      <span class="sp" style="flex:1"></span>
+      <button class="btn ghost small" type="button" data-act="export">Sikkerhetskopi (.json)</button>
+      <button class="btn ghost small danger" type="button" data-act="reset-ask">Ny vurdering</button>
+    </div>
+    <div id="dlMsg"></div>
+  </section>
+  <section class="card"><div style="padding:16px 22px 0" class="eyebrow">Forhåndsvisning av rapportens begynnelse</div><div class="docprev">${previewHTML()}</div></section>`;
+}
+function previewHTML(){
+  const m=S.meta; const hits=(S.screening.criteria||[]).length;
+  return `<p class="eyebrow" style="color:var(--accent)">Personvernkonsekvensvurdering (DPIA)</p><h2 style="font-size:26px;margin-top:0">${esc(m.name||'Uten navn')}</h2><p class="muted">${esc(m.org||'')} · ${esc(fmtDate(m.date))} · versjon ${esc(m.version||'')}</p>
+  <h2>1. Sammendrag</h2><p>${esc(S.report.summary||'Ikke skrevet ennå.')}</p>
+  <h2>3. Behov for DPIA</h2><p>Behandlingen treffer ${hits} av 9 kriterier.</p>
+  <h2>7. Risikovurdering</h2>${S.risks.length?S.risks.map((r,i)=>`<p><b>R${i+1}. ${esc(r.title||'Uten tittel')}</b> · før: ${LEVELS[riskLevel(r.s,r.k)]||'—'} · etter: ${LEVELS[riskLevel(r.rs,r.rk)]||'—'}</p>`).join(''):'<p class="muted">Ingen risikoer registrert.</p>'}
+  <h2>8. Konklusjon</h2><p>${esc(S.conclusion.conclusion||'Ikke skrevet ennå.')}</p>`;
+}
+
+/* ---------- KI ---------- */
+function kiCard(title,inner){ return `<div class="ki-card" role="region" aria-label="KI-forslag"><header><span class="ki-mark">KI</span>${esc(title)}<span class="sp"></span></header>${inner}</div>`; }
+function waiting(box,title,key){ box.innerHTML=kiCard(title,`<div style="display:flex;gap:10px;align-items:center"><span class="pulse"></span><span class="ki-text wait" data-stream>Tenker …</span></div><div class="ki-actions"><button class="btn small" type="button" data-act="stop" data-key="${key}">Stopp</button></div>`); }
+async function suggestField(secId,fId){
+  const sec=SECTIONS.find(x=>x.id===secId), f=sec.fields.find(x=>x.id===fId), key=secId+'.'+fId, box=document.getElementById(`sug-${secId}-${fId}`);
+  const cur=String(S[secId][fId]||'').trim();
+  aiCtl[key]?.abort(); const ctl=aiCtl[key]=new AbortController();
+  waiting(box,cur?'Forbedret tekst':'Forslag til tekst',key);
+  const extra = secId==='report' ? '\nSammendraget skal være på ca. 150–250 ord og egnet for ledelsen: hva behandlingen gjelder, hvorfor DPIA er gjennomført, de viktigste risikoene og tiltakene, samlet restrisiko og konklusjon.' : '';
+  const prompt=`${ROLE}
+
+OPPGAVE: Skriv ${cur?'en forbedret versjon av brukerens utkast til':'et forslag til'} svar på feltet «${f.label}» i delen «${sec.title}» (${sec.art}) i en DPIA.
+Veiledning for feltet: ${f.help}${extra}
+${cur?`\nBrukerens nåværende utkast (behold alle fakta, forbedre presisjon, struktur og fullstendighet):\n"""${cur}"""\n`:''}
+KONTEKST – det som er fylt ut i vurderingen så langt:
+"""
+${contextText(S)}
+"""
+
+REGLER:
+- Saklig og presist språk som passer i en formell rapport.
+- Ikke finn på fakta om virksomheten, systemene eller tallene. Der informasjon mangler, skriv en tydelig plassholder i hakeparentes, f.eks. [fyll inn: lagringstid].
+- Henvis til konkrete bestemmelser i GDPR der det er relevant.
+- Bruk korte punktlister med «- » når det gjør teksten tydeligere.
+- Maks ca. ${secId==='report'?260:180} ord.
+- Svar KUN med selve teksten, uten innledning, overskrift eller kommentarer.`;
+  try{
+    const {text}=await sample(prompt,{signal:ctl.signal,onText:({text})=>{const el=box.querySelector('[data-stream]'); if(el){el.classList.remove('wait');el.textContent=text; box.querySelector('.pulse')?.remove();}}});
+    box.innerHTML=kiCard(cur?'Forbedret tekst':'Forslag til tekst',`<div class="ki-text" id="kt-${key.replace('.','-')}">${esc(text.trim())}</div>
+      <div class="ki-actions"><button class="btn primary small" type="button" data-act="accept" data-sec="${secId}" data-f="${fId}" data-mode="replace">${cur?'Erstatt teksten min':'Bruk forslaget'}</button>
+      ${cur?`<button class="btn small" type="button" data-act="accept" data-sec="${secId}" data-f="${fId}" data-mode="append">Legg til under</button>`:''}
+      <button class="btn small ghost" type="button" data-act="dismiss" data-box="sug-${secId}-${fId}">Forkast</button></div>
+      <p class="ki-note">Les gjennom og tilpass forslaget. Fyll inn plassholdere i [hakeparentes] før du ferdigstiller.</p>`);
+    box.dataset.text=text.trim();
+  }catch(e){ box.innerHTML=e.code==='cancelled'?'':kiCard('Kunne ikke hente forslag',`<p class="ki-text">${esc(aiErr(e))}</p><div class="ki-actions"><button class="btn small ghost" type="button" data-act="dismiss" data-box="sug-${secId}-${fId}">Lukk</button></div>`); }
+}
+async function reviewSection(secId){
+  const sec=SECTIONS.find(x=>x.id===secId), box=document.getElementById('review-'+secId), key='review.'+secId;
+  aiCtl[key]?.abort(); const ctl=aiCtl[key]=new AbortController();
+  waiting(box,'Faglig gjennomgang av «'+sec.title+'»',key);
+  const own = sec.kind==='risks' ? S.risks.map((r,i)=>`R${i+1} ${r.title}: ${r.desc} | sannsynlighet ${r.s}, konsekvens ${r.k} | tiltak: ${r.measures} | etter: ${r.rs}/${r.rk}`).join('\n')
+    : sec.fields.filter(f=>isVisible(f,S)).map(f=>{let v=S[secId][f.id]; if(f.type==='checks') v=(v||[]).map(id=>(CRITERIA.find(c=>c.id===id)||{}).label).join('; '); return `${f.label}: ${filled(v)?v:'(ikke besvart)'}`;}).join('\n');
+  const prompt=`${ROLE}
+
+OPPGAVE: Gjennomgå delen «${sec.title}» (${sec.art}) i en DPIA kritisk, slik Datatilsynet eller et personvernombud ville gjort. Vurder om svarene er fullstendige, konkrete og i tråd med GDPR.
+
+SVARENE I DENNE DELEN:
+"""
+${own||'(ingenting)'}
+"""
+
+RESTEN AV VURDERINGEN (kontekst):
+"""
+${contextText(S,9000)}
+"""
+
+Svar KUN med JSON i dette formatet:
+{"helhet":"2–3 setninger med samlet vurdering","mangler":[{"felt":"navn på felt eller tema","kommentar":"konkret hva som mangler eller bør forbedres"}],"styrker":["kort punkt"]}
+Gi maks 6 mangler og maks 3 styrker. Vær konkret og saklig.`;
+  try{
+    const r=await sample.json(prompt,{signal:ctl.signal});
+    const mangler=Array.isArray(r?.mangler)?r.mangler:[], styrker=Array.isArray(r?.styrker)?r.styrker:[];
+    box.innerHTML=kiCard('Faglig gjennomgang av «'+sec.title+'»',`<p class="ki-text">${esc(r?.helhet||'')}</p>
+      ${mangler.length?`<div><b style="font-size:13px">Bør forbedres</b><ul class="ki-list" style="margin-top:6px">${mangler.map(m=>`<li><span><b style="font-weight:600">${esc(m.felt||'')}</b>: ${esc(m.kommentar||'')}</span></li>`).join('')}</ul></div>`:''}
+      ${styrker.length?`<div><b style="font-size:13px">Styrker</b><ul class="ki-list good" style="margin-top:6px">${styrker.map(m=>`<li><span>${esc(m)}</span></li>`).join('')}</ul></div>`:''}
+      <div class="ki-actions"><button class="btn small ghost" type="button" data-act="dismiss" data-box="review-${secId}">Lukk</button></div>
+      <p class="ki-note">Gjennomgangen er veiledende og endrer ikke svarene dine.</p>`);
+  }catch(e){ box.innerHTML=e.code==='cancelled'?'':kiCard('Gjennomgangen mislyktes',`<p class="ki-text">${esc(aiErr(e))}</p><div class="ki-actions"><button class="btn small ghost" type="button" data-act="dismiss" data-box="review-${secId}">Lukk</button></div>`); }
+}
+let riskSuggestions=[];
+async function suggestRisks(){
+  const box=$('#riskSugg'), key='risks.suggest';
+  aiCtl[key]?.abort(); const ctl=aiCtl[key]=new AbortController();
+  waiting(box,'Forslag til risikoer',key);
+  const prompt=`${ROLE}
+
+OPPGAVE: Foreslå de viktigste risikoene for de registrertes rettigheter og friheter ved behandlingen beskrevet under. Risiko skal vurderes fra de registrertes perspektiv (ikke virksomhetens). Unngå risikoer som allerede er registrert.
+
+VURDERINGEN SÅ LANGT:
+"""
+${contextText(S)}
+"""
+
+Skala sannsynlighet: 1 Lite sannsynlig, 2 Mulig, 3 Sannsynlig, 4 Svært sannsynlig.
+Skala konsekvens: 1 Ubetydelig, 2 Begrenset, 3 Alvorlig, 4 Svært alvorlig.
+
+Svar KUN med en JSON-liste med 4–6 objekter i dette formatet:
+[{"tittel":"kort tittel","beskrivelse":"hva kan skje med de registrerte, 1–2 setninger","sannsynlighet":2,"konsekvens":3,"tiltak":"- tiltak 1\\n- tiltak 2","restSannsynlighet":1,"restKonsekvens":3}]
+Tiltakene skal være konkrete tekniske og organisatoriske tiltak. Restrisikoen skal være realistisk etter tiltakene.`;
+  try{
+    const arr=await sample.json(prompt,{signal:ctl.signal});
+    const cl=n=>Math.min(4,Math.max(1,Math.round(+n||1)));
+    riskSuggestions=(Array.isArray(arr)?arr:[]).filter(x=>x&&x.tittel).map(x=>({title:String(x.tittel),desc:String(x.beskrivelse||''),s:cl(x.sannsynlighet),k:cl(x.konsekvens),measures:String(x.tiltak||''),rs:cl(x.restSannsynlighet),rk:cl(x.restKonsekvens)}));
+    if(!riskSuggestions.length) throw {code:'invalid_json'};
+    box.innerHTML=kiCard('Forslag til risikoer',`<div style="display:grid;gap:8px">${riskSuggestions.map((r,i)=>`<label class="sugg-risk"><input type="checkbox" id="rsg-${i}" checked data-rsg="${i}"><span><b>${esc(r.title)}</b><small>${esc(r.desc)}</small></span><span class="pill lv${riskLevel(r.s,r.k)}">${LEVELS[riskLevel(r.s,r.k)]}</span></label>`).join('')}</div>
+      <div class="ki-actions"><button class="btn primary small" type="button" data-act="add-sugg">Legg til valgte</button><button class="btn small ghost" type="button" data-act="dismiss" data-box="riskSugg">Forkast</button></div>
+      <p class="ki-note">Forslagene legges inn med vurderinger og tiltak du kan justere. Kontroller at de passer for deres behandling.</p>`);
+  }catch(e){ box.innerHTML=e.code==='cancelled'?'':kiCard('Kunne ikke foreslå risikoer',`<p class="ki-text">${esc(aiErr(e))}</p><div class="ki-actions"><button class="btn small ghost" type="button" data-act="dismiss" data-box="riskSugg">Lukk</button></div>`); }
+}
+async function suggestMeasures(id){
+  const r=S.risks.find(x=>x.id===id); const box=document.getElementById('sugm-'+id), key='m.'+id;
+  aiCtl[key]?.abort(); const ctl=aiCtl[key]=new AbortController();
+  waiting(box,'Forslag til tiltak',key);
+  const prompt=`${ROLE}
+
+OPPGAVE: Foreslå konkrete tekniske og organisatoriske tiltak som reduserer denne risikoen for de registrerte.
+Risiko: ${r.title||'(uten tittel)'}
+Beskrivelse: ${r.desc||'(ikke beskrevet)'}
+Eksisterende tiltak: ${r.measures||'(ingen)'}
+
+KONTEKST:
+"""
+${contextText(S,8000)}
+"""
+
+Svar KUN med en punktliste med 3–6 tiltak, hvert på egen linje som starter med «- ». Ta med eksisterende tiltak hvis de er gode. Ingen innledning.`;
+  try{
+    const {text}=await sample(prompt,{signal:ctl.signal,onText:({text})=>{const el=box.querySelector('[data-stream]'); if(el){el.classList.remove('wait');el.textContent=text;box.querySelector('.pulse')?.remove();}}});
+    box.dataset.text=text.trim();
+    box.innerHTML=kiCard('Forslag til tiltak',`<div class="ki-text">${esc(text.trim())}</div><div class="ki-actions"><button class="btn primary small" type="button" data-act="accept-m" data-id="${id}" data-mode="replace">Bruk forslaget</button>${filled(r.measures)?`<button class="btn small" type="button" data-act="accept-m" data-id="${id}" data-mode="append">Legg til under</button>`:''}<button class="btn small ghost" type="button" data-act="dismiss" data-box="sugm-${id}">Forkast</button></div>`);
+  }catch(e){ box.innerHTML=e.code==='cancelled'?'':kiCard('Kunne ikke foreslå tiltak',`<p class="ki-text">${esc(aiErr(e))}</p>`); }
+}
+
+/* ---------- Chat drawer ---------- */
+function openDrawer(kind){
+  const ov=$('#overlay');
+  if(kind==='chat'){
+    ov.innerHTML=`<div class="scrim" data-act="close"></div><aside class="drawer" role="dialog" aria-modal="true" aria-label="Spør rådgiveren">
+      <div class="drawer-h"><span class="ki-mark">KI</span><h2>Spør rådgiveren</h2><button class="btn ghost small" type="button" data-act="close">Lukk</button></div>
+      <div class="drawer-b" id="chatLog">${chatTurns.length?chatTurns.map(t=>`<div class="msg ${t.role==='user'?'u':'a'}">${esc(t.content)}</div>`).join(''):`<p class="help">Still spørsmål om DPIA, GDPR eller vurderingen du jobber med. Rådgiveren ser det du har fylt ut så langt. Svarene er veiledende.</p>
+        <div class="suggest-q">${['Hva er forskjellen på art. 6 og art. 9?','Når må vi drøfte med Datatilsynet?','Hvilke risikoer overser vi?','Er formålet vårt presist nok?'].map(q=>`<button class="btn small" type="button" data-act="ask" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>`}</div>
+      <div class="drawer-f">${sample?`<div class="chat-in"><textarea id="chatInput" placeholder="Skriv et spørsmål …" aria-label="Spørsmål"></textarea><button class="btn primary" type="button" data-act="send">Send</button></div><p class="ki-note">Spørsmålet og vurderingen sendes til Claude via din Claude-konto.</p>`:`<p class="notice">KI er ikke tilgjengelig i denne visningen.</p>`}</div></aside>`;
+    setTimeout(()=>$('#chatInput')?.focus(),30);
+  } else {
+    ov.innerHTML=`<div class="scrim" data-act="close"></div><aside class="drawer" role="dialog" aria-modal="true" aria-label="Personvern i verktøyet">
+      <div class="drawer-h"><h2>Personvern i verktøyet</h2><button class="btn ghost small" type="button" data-act="close">Lukk</button></div>
+      <div class="drawer-b">${document.createRange().createContextualFragment(startView()).querySelector('#trustCard').innerHTML}</div></aside>`;
+  }
+}
+async function sendChat(q){
+  q=String(q||'').trim(); if(!q||!sample) return;
+  chatTurns.push({role:'user',content:q}); openDrawer('chat');
+  const log=$('#chatLog'); const bubble=document.createElement('div'); bubble.className='msg a'; bubble.textContent='Tenker …'; log.appendChild(bubble); log.scrollTop=log.scrollHeight;
+  const rules=`${ROLE}\nSvar kort og konkret (normalt under 200 ord), og henvis til relevante artikler. Si fra når noe bør avklares med personvernombudet eller jurist.\n\nVURDERINGEN SÅ LANGT:\n"""\n${contextText(S,10000)}\n"""`;
+  const turns=[{role:'user',content:rules},...chatTurns.slice(-10)];
+  aiCtl.chat?.abort(); const ctl=aiCtl.chat=new AbortController();
+  try{ const {text}=await sample(turns,{cache:false,signal:ctl.signal,onText:({text})=>{bubble.textContent=text; log.scrollTop=log.scrollHeight;}});
+    chatTurns.push({role:'assistant',content:text}); bubble.textContent=text;
+  }catch(e){ bubble.textContent=e.text||aiErr(e); }
+}
+
+/* ---------- Downloads ---------- */
+function safeName(s){ return String(s||'DPIA').replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim().slice(0,90); }
+async function saveFile(filename,data,okMsg){
+  const msg=$('#dlMsg');
+  if(!downloads){ if(msg) msg.innerHTML=`<div class="notice bad">Nedlasting er ikke tilgjengelig i denne visningen. Åpne artefakten i claude.ai for å laste ned.</div>`; return; }
+  try{ const r=await downloads.save({filename,data}); toast(r.status==='delivered'?'Filen er levert.':okMsg); if(msg) msg.innerHTML=''; }
+  catch(e){ if(e.code==='declined') return; if(msg) msg.innerHTML=`<div class="notice bad">${e.code==='rate_limited'?'En nedlasting venter allerede. Prøv igjen om litt.':'Filen kunne ikke lagres. Prøv igjen.'}</div>`; }
+}
+function downloadDocx(draft){
+  const bytes=buildDocx(S,{draft});
+  const name=`DPIA – ${safeName(S.meta.name||'uten navn')}${draft?' (utkast)':''} – ${S.meta.date||''}.docx`;
+  saveFile(name,new Blob([bytes]),draft?'Utkastet er lastet ned.':'Rapporten er lastet ned.');
+}
+
+/* ---------- Events ---------- */
+function setField(secId,fId,val){ S[secId][fId]=val; if(S.example&&false) S.example=false; save(); renderSteps(); renderProgress(); }
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.risk){ const r=S.risks.find(x=>x.id===t.dataset.risk); if(!r) return; const f=t.dataset.rf;
+    r[f]=['s','k','rs','rk'].includes(f)?+t.value:t.value; save(); renderSteps(); renderProgress();
+    if(['s','k','rs','rk'].includes(f)){ const b=riskLevel(r.s,r.k),a=riskLevel(r.rs,r.rk); const pb=$('#pb-'+r.id),pa=$('#pa-'+r.id);
+      pb.className='pill lv'+b; pb.textContent='Før: '+(LEVELS[b]||'—'); pa.className='pill lv'+a; pa.textContent='Etter: '+(LEVELS[a]||'—'); $('#matrixCard').innerHTML=matrixHTML(); }
+    return; }
+  if(!t.dataset.sec||!t.dataset.f) return;
+  const sec=SECTIONS.find(x=>x.id===t.dataset.sec), f=sec.fields.find(x=>x.id===t.dataset.f);
+  if(f.type==='checks'){ const arr=new Set(S[sec.id][f.id]||[]); t.checked?arr.add(t.value):arr.delete(t.value); setField(sec.id,f.id,[...arr]); t.closest('.opt').classList.toggle('sel',t.checked); const v=$('#verdict'); if(v) v.outerHTML=verdictHTML(); return; }
+  setField(sec.id,f.id,t.value);
+  if(f.type==='radio'){ t.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.toggle('sel',o.querySelector('input').checked)); }
+  if(f.rerender && f.type!=='textarea') render(true);
+  if(f.type==='textarea'){ const c=t.parentElement.querySelector('.count'); if(c){const w=t.value.trim(); c.textContent=w?w.split(/\s+/).length+' ord':'';} }
+});
+document.addEventListener('change',e=>{ const t=e.target;
+  if(t.id==='importFile'&&t.files[0]){ const rd=new FileReader(); rd.onload=()=>{ try{ const o=JSON.parse(rd.result); if(!o||typeof o!=='object'||!o.meta) throw 0; S=Object.assign(blankState(),o); save(); step=1; render(); toast('Vurderingen er åpnet.'); }catch(_){ toast('Filen er ikke en gyldig DPIA-los-fil.'); } }; rd.readAsText(t.files[0]); }
+});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-step],[data-act]'); if(!b) return;
+  if(b.dataset.step!==undefined && !b.dataset.act){ const n=+b.dataset.step; if(n<0||n>SECTIONS.length) return; step=n; save(); $('#overlay').innerHTML=''; render(); return; }
+  const a=b.dataset.act;
+  if(a==='trust') openDrawer('trust');
+  else if(a==='close') $('#overlay').innerHTML='';
+  else if(a==='example'){ S=exampleState(); save(); render(); toast('Eksempelet er lastet inn.'); }
+  else if(a==='import') $('#importFile').click();
+  else if(a==='reset-ask'){ const host=b.parentElement; if(host.querySelector('.confirm')) return; const d=document.createElement('div'); d.className='confirm'; d.style.flexBasis='100%';
+    d.innerHTML=`<span>Alt som er fylt ut slettes fra nettleseren. Ta sikkerhetskopi først hvis du vil beholde det.</span><button class="btn small danger" type="button" data-act="reset">Slett og start på nytt</button><button class="btn small ghost" type="button" data-act="reset-cancel">Avbryt</button>`; host.appendChild(d); }
+  else if(a==='reset-cancel') b.closest('.confirm').remove();
+  else if(a==='reset'){ S=blankState(); chatTurns=[]; step=0; save(); render(); toast('En ny, tom vurdering er startet.'); }
+  else if(a==='suggest') suggestField(b.dataset.sec,b.dataset.f);
+  else if(a==='stop'){ aiCtl[b.dataset.key]?.abort(); }
+  else if(a==='dismiss'){ const el=document.getElementById(b.dataset.box); if(el) el.innerHTML=''; }
+  else if(a==='accept'){ const box=document.getElementById(`sug-${b.dataset.sec}-${b.dataset.f}`), txt=box.dataset.text||'';
+    const cur=String(S[b.dataset.sec][b.dataset.f]||'').trim(); const val=b.dataset.mode==='append'&&cur?cur+'\n\n'+txt:txt;
+    S.aiUsed[b.dataset.sec+'.'+b.dataset.f]=true; setField(b.dataset.sec,b.dataset.f,val); render(true); toast('Forslaget er satt inn. Les gjennom og tilpass det.');
+    setTimeout(()=>document.getElementById(`f-${b.dataset.sec}-${b.dataset.f}`)?.focus({preventScroll:false}),30); }
+  else if(a==='review') reviewSection(b.dataset.sec);
+  else if(a==='use-residual'){ S.conclusion.residual=b.dataset.v; if(LEVELS.indexOf(b.dataset.v)>=3 && !S.conclusion.prior) S.conclusion.prior='Ja'; save(); render(true); }
+  else if(a==='add-risk'){ const r=newRisk(); S.risks.push(r); save(); render(true); setTimeout(()=>document.getElementById(`rk-${r.id}-title`)?.focus(),30); }
+  else if(a==='del-risk'){ const host=b.closest('.risk-h'); if(host.querySelector('.confirm')) return; const d=document.createElement('div'); d.className='confirm'; d.style.flexBasis='100%';
+    d.innerHTML=`<span>Slette denne risikoen?</span><button class="btn small danger" type="button" data-act="del-risk-yes" data-id="${b.dataset.id}">Slett</button><button class="btn small ghost" type="button" data-act="reset-cancel">Avbryt</button>`; host.appendChild(d); }
+  else if(a==='del-risk-yes'){ S.risks=S.risks.filter(r=>r.id!==b.dataset.id); save(); render(true); }
+  else if(a==='mx'){ matrixMode=b.dataset.v; $('#matrixCard').innerHTML=matrixHTML(); }
+  else if(a==='suggest-risks') suggestRisks();
+  else if(a==='add-sugg'){ const picks=[...document.querySelectorAll('[data-rsg]')].filter(x=>x.checked).map(x=>riskSuggestions[+x.dataset.rsg]);
+    picks.forEach(p=>{ const r=newRisk(p); S.risks=S.risks.filter(x=>filled(x.title)||filled(x.desc)); S.risks.push(r); S.aiUsed['risks.suggest']=true; });
+    save(); render(true); toast(picks.length?`${picks.length} risikoer er lagt til. Kontroller vurderingene.`:'Ingen risikoer ble valgt.'); }
+  else if(a==='suggest-measures') suggestMeasures(b.dataset.id);
+  else if(a==='accept-m'){ const r=S.risks.find(x=>x.id===b.dataset.id); const txt=document.getElementById('sugm-'+r.id).dataset.text||'';
+    r.measures=b.dataset.mode==='append'&&filled(r.measures)?r.measures.trim()+'\n'+txt:txt; S.aiUsed['risks.'+r.id]=true; save(); render(true); }
+  else if(a==='docx') downloadDocx(false);
+  else if(a==='docx-draft') downloadDocx(true);
+  else if(a==='export') saveFile(`DPIA – ${safeName(S.meta.name||'uten navn')} – sikkerhetskopi.json`,JSON.stringify(S,null,2),'Sikkerhetskopien er lastet ned.');
+  else if(a==='ask') sendChat(b.dataset.q);
+  else if(a==='send'){ const v=$('#chatInput').value; sendChat(v); }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&$('#overlay').innerHTML) $('#overlay').innerHTML='';
+  if(e.key==='Enter'&&!e.shiftKey&&e.target.id==='chatInput'){ e.preventDefault(); sendChat(e.target.value); }
+});
+$('#openChat').addEventListener('click',()=>openDrawer('chat'));
+
+/* ---------- Boot ---------- */
+if(step<0||step>SECTIONS.length) step=0;
+render();
+(async()=>{
+  if(!window.claude?.use){ $('#openChat').hidden=true; return; }
+  const [smp,dl]=await Promise.all([claude.use('sample').catch(()=>null),claude.use('downloads').catch(()=>null)]);
+  sample=smp; downloads=dl;
+  if(!sample) $('#openChat').hidden=true;
+  render(true);
+})();
+</script>
