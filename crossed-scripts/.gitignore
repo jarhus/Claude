@@ -1,0 +1,6 @@
+web/private/config.php
+web/private/data/*
+!web/private/data/.gitkeep
+node_modules/
+*.zip
+tests/shots/

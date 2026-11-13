@@ -1,0 +1,119 @@
+{
+  "id": "trener-livvakt",
+  "version": 1,
+  "lang": "nb",
+  "pack": "office",
+  "title": "Personlig trener og livvakt",
+  "published": true,
+  "practice": false,
+  "roles": {
+    "A": {
+      "premise": "Du er personlig trener og møter en ny kunde.",
+      "situation": "Du jobber som personlig trener på et treningssenter og har første møte med en ny kunde.",
+      "other": "Motspilleren er en kunde som vil komme i form.",
+      "goal": "Få kunden til å binde seg til faste timer.",
+      "style": "Vær oppmuntrende og energisk. Ikke si ordene trener eller trening."
+    },
+    "B": {
+      "premise": "Du intervjuer en mulig livvakt.",
+      "situation": "Du har fått trusler og skal ansette en livvakt som kan følge deg overalt.",
+      "other": "Motspilleren søker jobben som livvakten din.",
+      "goal": "Finn ut om motspilleren faktisk kan beskytte deg.",
+      "style": "Vær alvorlig og litt engstelig. Ikke si ordet livvakt."
+    }
+  },
+  "lines": [
+    {
+      "role": "B",
+      "text": "Jeg trenger noen som følger meg tett. Nesten hver dag."
+    },
+    {
+      "role": "A",
+      "text": "Det er det beste. De som får tett oppfølging, ser resultater raskest."
+    },
+    {
+      "role": "B",
+      "text": "Resultatet jeg ønsker, er at det ikke skjer noe som helst."
+    },
+    {
+      "role": "A",
+      "text": "Ha ha, da er du ærligere enn de fleste. Vi starter rolig."
+    },
+    {
+      "role": "B",
+      "text": "Hva gjør du hvis noen plutselig kommer mot meg?"
+    },
+    {
+      "role": "A",
+      "text": "Da ber jeg dem pent om å vente til vi er ferdige."
+    },
+    {
+      "role": "B",
+      "text": "Høflig. Tåler du å ta en smell for meg?"
+    },
+    {
+      "role": "A",
+      "text": "Jeg står alltid rett bak deg og tar imot hvis det blir for tungt."
+    },
+    {
+      "role": "B",
+      "text": "Betryggende. Har du noen gang mistet noen?"
+    },
+    {
+      "role": "A",
+      "text": "Et par stykker ga seg etter jul. Men de fleste holder ut."
+    },
+    {
+      "role": "B",
+      "text": "Ga seg etter jul … Vi tar en prøvemåned."
+    },
+    {
+      "role": "A",
+      "text": "Flott! Ta med joggesko på mandag."
+    }
+  ],
+  "guesses": {
+    "A": {
+      "options": [
+        {
+          "id": "a1",
+          "text": "Et første møte mellom en personlig trener og en kunde"
+        },
+        {
+          "id": "a2",
+          "text": "Et første møte mellom en fysioterapeut og en pasient"
+        },
+        {
+          "id": "a3",
+          "text": "Et første møte mellom en danselærer og en elev"
+        },
+        {
+          "id": "a4",
+          "text": "Et første møte mellom en kjørelærer og en elev"
+        }
+      ],
+      "correct": "a1"
+    },
+    "B": {
+      "options": [
+        {
+          "id": "b1",
+          "text": "Et intervju med en mulig livvakt"
+        },
+        {
+          "id": "b2",
+          "text": "Et intervju med en mulig privatsjåfør"
+        },
+        {
+          "id": "b3",
+          "text": "Et intervju med en mulig personlig assistent"
+        },
+        {
+          "id": "b4",
+          "text": "Et møte med en advokat før en rettssak"
+        }
+      ],
+      "correct": "b1"
+    }
+  }
+}

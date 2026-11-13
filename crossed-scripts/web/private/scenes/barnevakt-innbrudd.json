@@ -1,0 +1,119 @@
+{
+  "id": "barnevakt-innbrudd",
+  "version": 1,
+  "lang": "nb",
+  "pack": "starter",
+  "title": "Barnevakt og innbrudd",
+  "published": true,
+  "practice": false,
+  "roles": {
+    "A": {
+      "premise": "Du er på intervju for en jobb som barnevakt.",
+      "situation": "Du søker jobb som barnevakt hos en velstående familie. Du har lite erfaring, men vil veldig gjerne ha jobben.",
+      "other": "Motspilleren er en av foreldrene i familien.",
+      "goal": "Vis at du er trygg og til å stole på, slik at du får jobben.",
+      "style": "Vær rolig, hyggelig og profesjonell. Ikke si hvilken jobb du søker på."
+    },
+    "B": {
+      "premise": "Du planlegger et innbrudd og trenger noen til vakthundene.",
+      "situation": "Du planlegger et innbrudd hos en velstående familie fredag kveld. Huset voktes av hunder.",
+      "other": "Motspilleren er en du har hyret inn for å holde vakthundene rolige mens dere tømmer huset.",
+      "goal": "Forsikre deg om at motspilleren tåler jobben og holder tett.",
+      "style": "Vær alvorlig, lavmælt og diskret. Ikke si hva dere egentlig skal gjøre."
+    }
+  },
+  "lines": [
+    {
+      "role": "B",
+      "text": "Takk for at du kom. Det vi snakker om her, blir mellom oss. Ikke sant?"
+    },
+    {
+      "role": "A",
+      "text": "Selvfølgelig. Jeg skjønner godt at dere er forsiktige med hvem dere slipper inn i huset."
+    },
+    {
+      "role": "B",
+      "text": "Det gjelder fredag kveld. De to minste kan være vanskelige. Hva gjør du hvis en av dem begynner å hyle?"
+    },
+    {
+      "role": "A",
+      "text": "Da setter jeg meg rolig ned på gulvet og snakker lavt. Det pleier å virke."
+    },
+    {
+      "role": "B",
+      "text": "På gulvet. Modig. Og hvis de biter?"
+    },
+    {
+      "role": "A",
+      "text": "Det har jeg vært borti før. Man må bare ikke vise at det gjør vondt."
+    },
+    {
+      "role": "B",
+      "text": "Bra. Vi er ute igjen før midnatt. Du blir til alt er stille."
+    },
+    {
+      "role": "A",
+      "text": "Helt fint. Når det er blitt stille, pleier jeg å sette meg i sofaen og se litt på TV."
+    },
+    {
+      "role": "B",
+      "text": "Se på TV? Du er utrolig avslappet til å være første gang."
+    },
+    {
+      "role": "A",
+      "text": "Man blir ikke bedre av å stresse. Hva med betalingen?"
+    },
+    {
+      "role": "B",
+      "text": "Fem tusen. Du får dem når vi er ferdige."
+    },
+    {
+      "role": "A",
+      "text": "Fem tusen? Da kan jeg komme hver fredag!"
+    }
+  ],
+  "guesses": {
+    "A": {
+      "options": [
+        {
+          "id": "a1",
+          "text": "Et intervju for en jobb som barnevakt"
+        },
+        {
+          "id": "a2",
+          "text": "Et intervju for en jobb som nattevakt på sykehjem"
+        },
+        {
+          "id": "a3",
+          "text": "En avtale om å passe huset i ferien"
+        },
+        {
+          "id": "a4",
+          "text": "Et intervju for en jobb som dyrepasser i dyrehage"
+        }
+      ],
+      "correct": "a1"
+    },
+    "B": {
+      "options": [
+        {
+          "id": "b1",
+          "text": "Planlegging av et innbrudd med vakthunder i huset"
+        },
+        {
+          "id": "b2",
+          "text": "Planlegging av en overraskelsesfest for naboen"
+        },
+        {
+          "id": "b3",
+          "text": "Ansettelse av en nattevakt til et lager"
+        },
+        {
+          "id": "b4",
+          "text": "Planlegging av en flytting midt på natta"
+        }
+      ],
+      "correct": "b1"
+    }
+  }
+}

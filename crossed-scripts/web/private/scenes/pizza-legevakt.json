@@ -1,0 +1,119 @@
+{
+  "id": "pizza-legevakt",
+  "version": 1,
+  "lang": "nb",
+  "pack": "starter",
+  "title": "Pizzabestilling og nødtelefon",
+  "published": true,
+  "practice": false,
+  "roles": {
+    "A": {
+      "premise": "Du ringer for å bestille pizza.",
+      "situation": "Du er skrubbsulten etter en lang dag og ringer for å bestille pizza hjem.",
+      "other": "Motspilleren jobber på pizzarestauranten og tar imot bestillingen.",
+      "goal": "Få maten levert så fort som mulig.",
+      "style": "Vær utålmodig og veldig sulten. Ikke si ordet pizza."
+    },
+    "B": {
+      "premise": "Du jobber på nødtelefonen og har en innringer på linja.",
+      "situation": "Du er operatør på nødtelefonen. En innringer virker oppjaget, og du må finne ut hva som har skjedd.",
+      "other": "Motspilleren er en person i nød som har ringt inn.",
+      "goal": "Hold innringeren rolig og finn ut hvor alvorlig det er.",
+      "style": "Vær rolig, tydelig og bekymret. Ikke si ordene nød eller ambulanse."
+    }
+  },
+  "lines": [
+    {
+      "role": "B",
+      "text": "Du har kommet riktig. Hva gjelder det?"
+    },
+    {
+      "role": "A",
+      "text": "Endelig! Det haster. Jeg holder ikke ut stort lenger."
+    },
+    {
+      "role": "B",
+      "text": "Rolig nå. Fortell meg hva du trenger."
+    },
+    {
+      "role": "A",
+      "text": "En stor. Og dere må komme fort, jeg er helt skjelven."
+    },
+    {
+      "role": "B",
+      "text": "Vi kommer så fort vi kan. Er du alene?"
+    },
+    {
+      "role": "A",
+      "text": "Ja, heldigvis. Da slipper jeg å dele med noen."
+    },
+    {
+      "role": "B",
+      "text": "Dele? Greit. Har du vondt noe sted?"
+    },
+    {
+      "role": "A",
+      "text": "Bare i magen. Det rumler noe forferdelig."
+    },
+    {
+      "role": "B",
+      "text": "Har du fått i deg noe du ikke tåler?"
+    },
+    {
+      "role": "A",
+      "text": "Ikke ennå! Og husk: uten ananas, det tåler jeg ikke."
+    },
+    {
+      "role": "B",
+      "text": "Uten ananas. Det er notert. Bli der du er."
+    },
+    {
+      "role": "A",
+      "text": "Jeg går ingen steder før dere har kommet."
+    }
+  ],
+  "guesses": {
+    "A": {
+      "options": [
+        {
+          "id": "a1",
+          "text": "En sulten kunde bestiller pizza på telefon"
+        },
+        {
+          "id": "a2",
+          "text": "En kunde bestiller en drosje til flyplassen"
+        },
+        {
+          "id": "a3",
+          "text": "En kunde ringer rørleggervakta om en lekkasje"
+        },
+        {
+          "id": "a4",
+          "text": "En kunde bestiller blomster til en bursdag"
+        }
+      ],
+      "correct": "a1"
+    },
+    "B": {
+      "options": [
+        {
+          "id": "b1",
+          "text": "En operatør på nødtelefonen snakker med en innringer"
+        },
+        {
+          "id": "b2",
+          "text": "En kundebehandler i banken hjelper med et sperret kort"
+        },
+        {
+          "id": "b3",
+          "text": "En resepsjonist tar imot en bestilling av rom"
+        },
+        {
+          "id": "b4",
+          "text": "En radiovert har en lytter på lufta"
+        }
+      ],
+      "correct": "b1"
+    }
+  }
+}

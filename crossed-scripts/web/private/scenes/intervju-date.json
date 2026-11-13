@@ -1,0 +1,119 @@
+{
+  "id": "intervju-date",
+  "version": 1,
+  "lang": "nb",
+  "pack": "dating",
+  "title": "Jobbintervju og første date",
+  "published": true,
+  "practice": false,
+  "roles": {
+    "A": {
+      "premise": "Du er på jobbintervju.",
+      "situation": "Du er på jobbintervju i en kafé. Du mistet den forrige jobben og trenger denne.",
+      "other": "Motspilleren er lederen som intervjuer deg.",
+      "goal": "Gjør et godt inntrykk og få et tilbud.",
+      "style": "Vær ivrig, høflig og litt nervøs. Ikke si ordene jobb eller intervju."
+    },
+    "B": {
+      "premise": "Du er på en første date.",
+      "situation": "Du er på blind date i en kafé. Det er lenge siden sist, og du har store forventninger.",
+      "other": "Motspilleren er daten din, som du møter for første gang.",
+      "goal": "Finn ut om dette er en du kan bli sammen med.",
+      "style": "Vær varm, nysgjerrig og litt flørtende. Ikke si ordet date."
+    }
+  },
+  "lines": [
+    {
+      "role": "A",
+      "text": "Takk for at du ville møte meg. Jeg har gledet meg, men er litt nervøs."
+    },
+    {
+      "role": "B",
+      "text": "Det er jeg også, helt ærlig. Fortell litt om deg selv, da."
+    },
+    {
+      "role": "A",
+      "text": "Jeg er pålitelig, lærer fort og er vant til lange dager."
+    },
+    {
+      "role": "B",
+      "text": "Lange dager, ja. Hva tror du gikk galt sist?"
+    },
+    {
+      "role": "A",
+      "text": "Vi ville forskjellige ting. Jeg ønsket mer ansvar, og det var det ikke rom for."
+    },
+    {
+      "role": "B",
+      "text": "Mer ansvar. Det liker jeg. Hva ser du etter nå?"
+    },
+    {
+      "role": "A",
+      "text": "Noe fast. Gjerne med mulighet til å vokse over tid."
+    },
+    {
+      "role": "B",
+      "text": "Oi, du går rett på sak. Ser du for deg helger også?"
+    },
+    {
+      "role": "A",
+      "text": "Helger går fint, så lenge det kompenseres."
+    },
+    {
+      "role": "B",
+      "text": "Kompenseres? Jeg kan jo spandere middagen."
+    },
+    {
+      "role": "A",
+      "text": "Det er hyggelig. Når kan jeg regne med å høre fra dere?"
+    },
+    {
+      "role": "B",
+      "text": "Fra oss? Det er egentlig bare meg."
+    }
+  ],
+  "guesses": {
+    "A": {
+      "options": [
+        {
+          "id": "a1",
+          "text": "Et jobbintervju med en mulig ny sjef"
+        },
+        {
+          "id": "a2",
+          "text": "Et møte med banken om et boliglån"
+        },
+        {
+          "id": "a3",
+          "text": "En visning hos en utleier av en leilighet"
+        },
+        {
+          "id": "a4",
+          "text": "En første time hos en karriereveileder"
+        }
+      ],
+      "correct": "a1"
+    },
+    "B": {
+      "options": [
+        {
+          "id": "b1",
+          "text": "En første date med en ukjent"
+        },
+        {
+          "id": "b2",
+          "text": "Et gjensyn med en gammel klassekamerat"
+        },
+        {
+          "id": "b3",
+          "text": "En samtale med en mulig romkamerat i kollektivet"
+        },
+        {
+          "id": "b4",
+          "text": "En første time hos en ny psykolog"
+        }
+      ],
+      "correct": "b1"
+    }
+  }
+}

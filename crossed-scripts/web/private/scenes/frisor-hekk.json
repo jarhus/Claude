@@ -1,0 +1,119 @@
+{
+  "id": "frisor-hekk",
+  "version": 1,
+  "lang": "nb",
+  "pack": "family",
+  "title": "Frisør og hekkeklipp",
+  "published": true,
+  "practice": false,
+  "roles": {
+    "A": {
+      "premise": "Du er kunde hos frisøren.",
+      "situation": "Du har endelig fått time hos en ny frisør og vil bare ha en forsiktig klipp.",
+      "other": "Motspilleren er frisøren.",
+      "goal": "Forklar hva du vil ha gjort, og unngå at det blir for kort.",
+      "style": "Vær vennlig, men litt engstelig for resultatet. Ikke si ordene hår eller frisør."
+    },
+    "B": {
+      "premise": "Du er gartner og skal klippe en hekk for en kunde.",
+      "situation": "Du er gartner og har fått i oppdrag å klippe en forvokst hekk. Naboen har klaget.",
+      "other": "Motspilleren er huseieren som har bestilt jobben.",
+      "goal": "Avklar hvor mye som skal bort, og bli ferdig i dag.",
+      "style": "Vær praktisk og effektiv. Ikke si ordene hekk eller hage."
+    }
+  },
+  "lines": [
+    {
+      "role": "A",
+      "text": "Jeg vil bare ta litt på toppen og rydde opp på sidene."
+    },
+    {
+      "role": "B",
+      "text": "Skjønner. Hvor høyt er det nå?"
+    },
+    {
+      "role": "A",
+      "text": "Høyt? Vel … litt over skuldrene, vil jeg si."
+    },
+    {
+      "role": "B",
+      "text": "Det er ikke så verst. Når ble det klipt sist?"
+    },
+    {
+      "role": "A",
+      "text": "Rett før konfirmasjonen til nevøen min. Et halvt år siden."
+    },
+    {
+      "role": "B",
+      "text": "Da har det vokst vilt. Er det mye dødt inni der?"
+    },
+    {
+      "role": "A",
+      "text": "Tuppene er litt slitte, det innrømmer jeg."
+    },
+    {
+      "role": "B",
+      "text": "Da tar jeg motorsaga på det groveste og fintrimmer etterpå."
+    },
+    {
+      "role": "A",
+      "text": "Motorsaga? Bruker du ikke saks?"
+    },
+    {
+      "role": "B",
+      "text": "Saks? Da står vi her til jul. Naboen din har klaget på at det henger over gjerdet."
+    },
+    {
+      "role": "A",
+      "text": "Har naboen klaget? På meg?"
+    },
+    {
+      "role": "B",
+      "text": "Slapp av. Jeg kjører bort avfallet etterpå. Det er inkludert."
+    }
+  ],
+  "guesses": {
+    "A": {
+      "options": [
+        {
+          "id": "a1",
+          "text": "En kunde forklarer frisøren hva som skal gjøres"
+        },
+        {
+          "id": "a2",
+          "text": "En kunde bestiller en ny dress hos skredderen"
+        },
+        {
+          "id": "a3",
+          "text": "En pasient forklarer tannlegen hva som plager"
+        },
+        {
+          "id": "a4",
+          "text": "En kunde leverer en genser til reparasjon"
+        }
+      ],
+      "correct": "a1"
+    },
+    "B": {
+      "options": [
+        {
+          "id": "b1",
+          "text": "En gartner skal klippe en hekk for en kunde"
+        },
+        {
+          "id": "b2",
+          "text": "En snekker skal bygge nytt gjerde mot naboen"
+        },
+        {
+          "id": "b3",
+          "text": "En maler skal male et hus utvendig"
+        },
+        {
+          "id": "b4",
+          "text": "En feier skal rense en gammel pipe"
+        }
+      ],
+      "correct": "b1"
+    }
+  }
+}

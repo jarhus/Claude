@@ -1,0 +1,119 @@
+{
+  "id": "visning-skrekkhus",
+  "version": 1,
+  "lang": "nb",
+  "pack": "starter",
+  "title": "Boligvisning og skrekkhus",
+  "published": true,
+  "practice": false,
+  "roles": {
+    "A": {
+      "premise": "Du er eiendomsmegler og viser en bolig til en mulig kjøper.",
+      "situation": "Du er eiendomsmegler og har visning i en gammel villa som har vært vanskelig å selge.",
+      "other": "Motspilleren er en interessert boligkjøper.",
+      "goal": "Få solgt huset. Snakk pent om alt.",
+      "style": "Vær blid og selgende. Ikke si ordene megler eller visning."
+    },
+    "B": {
+      "premise": "Du leter etter et hus til en skrekkattraksjon.",
+      "situation": "Du lager en skrekkattraksjon til halloween og leter etter et gammelt hus å leie. Jo skumlere, jo bedre.",
+      "other": "Motspilleren er eieren som viser deg huset.",
+      "goal": "Finn ut om huset er skummelt nok og tåler mange besøkende.",
+      "style": "Vær begeistret for alt som er gammelt og nifst. Ikke si halloween eller spøkelse."
+    }
+  },
+  "lines": [
+    {
+      "role": "A",
+      "text": "Velkommen inn! Som du merker, er det mye sjel i veggene her."
+    },
+    {
+      "role": "B",
+      "text": "Det merker jeg. Akkurat det vi ser etter. Knirker trappa?"
+    },
+    {
+      "role": "A",
+      "text": "Bitte litt, men det er lett å fikse."
+    },
+    {
+      "role": "B",
+      "text": "Nei, nei, ikke rør den! Hvordan er kjelleren?"
+    },
+    {
+      "role": "A",
+      "text": "Romslig og tørr. Forrige eier brukte den nesten aldri."
+    },
+    {
+      "role": "B",
+      "text": "Perfekt. Det er der vi får de fleste skrikene."
+    },
+    {
+      "role": "A",
+      "text": "Skrikene? Ja … barnefamilier trives veldig godt her."
+    },
+    {
+      "role": "B",
+      "text": "Barna blir alltid reddest, ja. Tåler naboene litt leven om natta?"
+    },
+    {
+      "role": "A",
+      "text": "Det er et rolig strøk. Folk legger seg tidlig."
+    },
+    {
+      "role": "B",
+      "text": "Enda bedre. Hvor mange får vi gjennom huset på en time?"
+    },
+    {
+      "role": "A",
+      "text": "På forrige runde hadde vi tolv stykker innom."
+    },
+    {
+      "role": "B",
+      "text": "Tolv? Vi må opp i hundre. Men jeg tar det."
+    }
+  ],
+  "guesses": {
+    "A": {
+      "options": [
+        {
+          "id": "a1",
+          "text": "En megler viser en bolig til en mulig kjøper"
+        },
+        {
+          "id": "a2",
+          "text": "En håndverker gir pris på oppussing av et hus"
+        },
+        {
+          "id": "a3",
+          "text": "En guide viser rundt på et gammelt museum"
+        },
+        {
+          "id": "a4",
+          "text": "En utleier viser fram et selskapslokale"
+        }
+      ],
+      "correct": "a1"
+    },
+    "B": {
+      "options": [
+        {
+          "id": "b1",
+          "text": "Jakt på et hus til en skrekkattraksjon"
+        },
+        {
+          "id": "b2",
+          "text": "Jakt på et hus til en ny barnehage"
+        },
+        {
+          "id": "b3",
+          "text": "Jakt på et lokale til et stort bryllup"
+        },
+        {
+          "id": "b4",
+          "text": "Jakt på et hus til innspilling av en kokkeserie"
+        }
+      ],
+      "correct": "b1"
+    }
+  }
+}

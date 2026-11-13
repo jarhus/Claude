@@ -1,0 +1,99 @@
+{
+  "id": "ovelse-hund-bil",
+  "version": 1,
+  "lang": "nb",
+  "pack": "starter",
+  "title": "Øvelse: valp og bruktbil",
+  "published": true,
+  "practice": true,
+  "roles": {
+    "A": {
+      "premise": "Du vil kjøpe en hund av en oppdretter.",
+      "situation": "Du er hos en hundeoppdretter og vurderer å kjøpe en voksen hund til familien.",
+      "other": "Motspilleren er oppdretteren som selger hunden.",
+      "goal": "Finn ut om hunden passer for familien din.",
+      "style": "Vær vennlig og litt forsiktig. Ikke si ordet hund."
+    },
+    "B": {
+      "premise": "Du selger en bruktbil.",
+      "situation": "Du selger den gamle bilen din privat. En interessert kjøper har kommet for å se på den.",
+      "other": "Motspilleren er en mulig kjøper av bilen.",
+      "goal": "Få solgt bilen i dag.",
+      "style": "Vær en ivrig selger. Ikke si ordet bil."
+    }
+  },
+  "lines": [
+    {
+      "role": "B",
+      "text": "Hun er fem år gammel og har bare hatt én eier."
+    },
+    {
+      "role": "A",
+      "text": "Så bra. Er hun snill med barn?"
+    },
+    {
+      "role": "B",
+      "text": "Ja da, det er god plass til tre i baksetet."
+    },
+    {
+      "role": "A",
+      "text": "I baksetet? Ok. Hvor mye spiser hun?"
+    },
+    {
+      "role": "B",
+      "text": "Omtrent en halv liter på mila."
+    },
+    {
+      "role": "A",
+      "text": "Det var … mye. Kan jeg ta henne med på en liten tur først?"
+    },
+    {
+      "role": "B",
+      "text": "Selvsagt. Nøkkelen står i."
+    }
+  ],
+  "guesses": {
+    "A": {
+      "options": [
+        {
+          "id": "a1",
+          "text": "Et besøk hos en oppdretter for å kjøpe hund"
+        },
+        {
+          "id": "a2",
+          "text": "Et besøk på en gård for å leie hest"
+        },
+        {
+          "id": "a3",
+          "text": "Et møte for å ansette en barnevakt"
+        },
+        {
+          "id": "a4",
+          "text": "Et besøk i en butikk for å kjøpe sykkel"
+        }
+      ],
+      "correct": "a1"
+    },
+    "B": {
+      "options": [
+        {
+          "id": "b1",
+          "text": "Et privat salg av en bruktbil"
+        },
+        {
+          "id": "b2",
+          "text": "Et privat salg av en gammel seilbåt"
+        },
+        {
+          "id": "b3",
+          "text": "En visning av en hytte til leie"
+        },
+        {
+          "id": "b4",
+          "text": "Et salg av en brukt barnevogn"
+        }
+      ],
+      "correct": "b1"
+    }
+  }
+}

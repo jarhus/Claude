@@ -1,0 +1,119 @@
+{
+  "id": "lege-verksted",
+  "version": 1,
+  "lang": "nb",
+  "pack": "starter",
+  "title": "Legetime og bilverksted",
+  "published": true,
+  "practice": false,
+  "roles": {
+    "A": {
+      "premise": "Du er pasient og forklarer plagene dine til legen.",
+      "situation": "Du er hos legen fordi kroppen har begynt å skrante. Du er litt flau over å klage.",
+      "other": "Motspilleren er legen din.",
+      "goal": "Få hjelp med plagene dine uten å virke sutrete.",
+      "style": "Vær ærlig og litt brydd. Ikke si ordene lege eller kropp."
+    },
+    "B": {
+      "premise": "Du er bilmekaniker og tar imot en kunde med en gammel bil.",
+      "situation": "Du er bilmekaniker. En kunde har kommet innom verkstedet for å forklare hva som feiler bilen.",
+      "other": "Motspilleren er en kunde som beskriver feilene på bilen sin.",
+      "goal": "Finn feilen, og si ærlig fra hvis det ikke lønner seg å reparere.",
+      "style": "Vær rett på sak og praktisk. Ikke si ordene bil eller verksted."
+    }
+  },
+  "lines": [
+    {
+      "role": "B",
+      "text": "Hei. Hva er problemet?"
+    },
+    {
+      "role": "A",
+      "text": "Det knirker når jeg står opp om morgenen. Og så går det veldig tregt i bakker."
+    },
+    {
+      "role": "B",
+      "text": "Hvor gammel er det snakk om?"
+    },
+    {
+      "role": "A",
+      "text": "Førtisju. Men godt holdt, synes jeg selv."
+    },
+    {
+      "role": "B",
+      "text": "Førtisju! Da er det nesten veteran. Lekker det noe?"
+    },
+    {
+      "role": "A",
+      "text": "Eh … bare når jeg ler veldig."
+    },
+    {
+      "role": "B",
+      "text": "Jeg skjønner. Når ble det sist skiftet olje?"
+    },
+    {
+      "role": "A",
+      "text": "Jeg tar tran hver dag, hvis det er det du mener."
+    },
+    {
+      "role": "B",
+      "text": "Tran. Kreativt. Da må vi opp på løftebukken og se på undersiden."
+    },
+    {
+      "role": "A",
+      "text": "Løftebukken? Skal jeg ta av meg skoene?"
+    },
+    {
+      "role": "B",
+      "text": "Det spiller ingen rolle. Men ærlig talt: Det kan lønne seg å bytte til en nyere modell."
+    },
+    {
+      "role": "A",
+      "text": "Det sier kona mi også."
+    }
+  ],
+  "guesses": {
+    "A": {
+      "options": [
+        {
+          "id": "a1",
+          "text": "En pasient forklarer plagene sine til legen"
+        },
+        {
+          "id": "a2",
+          "text": "En kunde klager på en ny seng i møbelbutikken"
+        },
+        {
+          "id": "a3",
+          "text": "En søker forteller om seg selv i et jobbintervju"
+        },
+        {
+          "id": "a4",
+          "text": "En kunde bestiller time hos en massør"
+        }
+      ],
+      "correct": "a1"
+    },
+    "B": {
+      "options": [
+        {
+          "id": "b1",
+          "text": "En bilmekaniker tar imot en kunde med en gammel bil"
+        },
+        {
+          "id": "b2",
+          "text": "En veterinær undersøker et gammelt kjæledyr"
+        },
+        {
+          "id": "b3",
+          "text": "En rørlegger ser på en lekkasje på et bad"
+        },
+        {
+          "id": "b4",
+          "text": "En selger vurderer en gammel båt i innbytte"
+        }
+      ],
+      "correct": "b1"
+    }
+  }
+}

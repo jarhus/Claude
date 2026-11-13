@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14122b">
+<meta name="robots" content="noindex">
+<title>Crossed Scripts</title>
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<header class="top">
+  <span class="brand">Crossed Scripts</span>
+  <span class="tools">
+    <button type="button" data-act="vibe" id="vibeBtn" aria-pressed="true">Vibrasjon på</button>
+    <button type="button" data-act="textDown" aria-label="Mindre tekst">A−</button>
+    <button type="button" data-act="textUp" aria-label="Større tekst">A+</button>
+  </span>
+</header>
+<div id="banner" role="status" aria-live="polite"></div>
+<main id="app"></main>
+<footer id="hostbar"></footer>
+<noscript>Spillet trenger JavaScript.</noscript>
+<script src="qrcode.js"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>

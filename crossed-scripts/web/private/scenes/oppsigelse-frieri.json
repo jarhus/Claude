@@ -1,0 +1,119 @@
+{
+  "id": "oppsigelse-frieri",
+  "version": 1,
+  "lang": "nb",
+  "pack": "office",
+  "title": "Oppsigelse og frieri",
+  "published": true,
+  "practice": false,
+  "roles": {
+    "A": {
+      "premise": "Du er sjef og må si opp en ansatt.",
+      "situation": "Du er leder og må si opp en medarbeider du liker godt. Hele avdelingen legges ned.",
+      "other": "Motspilleren er den ansatte som skal få beskjeden.",
+      "goal": "Gi beskjeden så skånsomt og ryddig som mulig.",
+      "style": "Vær varm, alvorlig og litt omstendelig. Ikke si ordene oppsigelse eller jobb."
+    },
+    "B": {
+      "premise": "Du tror kjæresten din er i ferd med å fri.",
+      "situation": "Kjæresten din har bedt om en alvorlig prat. Dere har vært sammen i fem år, og du er sikker på at det kommer et frieri.",
+      "other": "Motspilleren er kjæresten din.",
+      "goal": "Hjelp kjæresten fram til det store spørsmålet.",
+      "style": "Vær forventningsfull og rørt. Ikke si ordet frieri."
+    }
+  },
+  "lines": [
+    {
+      "role": "A",
+      "text": "Takk for at du tok deg tid. Jeg har tenkt lenge på dette."
+    },
+    {
+      "role": "B",
+      "text": "Det har jeg merket. Du har vært så rar de siste ukene."
+    },
+    {
+      "role": "A",
+      "text": "Vi har hatt fem fine år sammen, og du har betydd mye."
+    },
+    {
+      "role": "B",
+      "text": "Fem år, ja. Jeg har ventet på at du skulle si noe."
+    },
+    {
+      "role": "A",
+      "text": "Derfor er det ekstra vanskelig. Men det er på tide å ta et nytt steg."
+    },
+    {
+      "role": "B",
+      "text": "Ja! Endelig. Jeg mener … fortsett."
+    },
+    {
+      "role": "A",
+      "text": "Du tar det overraskende pent. De fleste blir lei seg."
+    },
+    {
+      "role": "B",
+      "text": "De fleste? Hvor mange har du spurt?"
+    },
+    {
+      "role": "A",
+      "text": "Tre denne uka. Det gjelder dessverre hele avdelingen."
+    },
+    {
+      "role": "B",
+      "text": "Hele avdelingen? Har du en ring eller ikke?"
+    },
+    {
+      "role": "A",
+      "text": "Du får tre måneders lønn og en god attest."
+    },
+    {
+      "role": "B",
+      "text": "Det var det minst romantiske jeg har hørt."
+    }
+  ],
+  "guesses": {
+    "A": {
+      "options": [
+        {
+          "id": "a1",
+          "text": "En sjef må si opp en ansatt"
+        },
+        {
+          "id": "a2",
+          "text": "En sjef tilbyr en ansatt forfremmelse"
+        },
+        {
+          "id": "a3",
+          "text": "En utleier sier opp en leieboer"
+        },
+        {
+          "id": "a4",
+          "text": "En trener tar en spiller ut av laget"
+        }
+      ],
+      "correct": "a1"
+    },
+    "B": {
+      "options": [
+        {
+          "id": "b1",
+          "text": "Kjæresten er i ferd med å fri"
+        },
+        {
+          "id": "b2",
+          "text": "Kjæresten er i ferd med å gjøre det slutt"
+        },
+        {
+          "id": "b3",
+          "text": "En venn skal avsløre en overraskelsesreise"
+        },
+        {
+          "id": "b4",
+          "text": "Sjefen skal dele ut en pris for lang tjeneste"
+        }
+      ],
+      "correct": "b1"
+    }
+  }
+}

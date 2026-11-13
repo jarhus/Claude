@@ -1,0 +1,119 @@
+{
+  "id": "hotell-fengsel",
+  "version": 1,
+  "lang": "nb",
+  "pack": "movie",
+  "title": "Hotell og fengsel",
+  "published": true,
+  "practice": false,
+  "roles": {
+    "A": {
+      "premise": "Du sjekker inn på et hotell for en ukes ferie.",
+      "situation": "Du sjekker inn på et avsidesliggende hotell for en ukes velfortjent ferie.",
+      "other": "Motspilleren er resepsjonisten.",
+      "goal": "Finn ut hva oppholdet inkluderer, og få mest mulig ut av uka.",
+      "style": "Vær i strålende humør og fornøyd med alt. Ikke si ordene hotell eller ferie."
+    },
+    "B": {
+      "premise": "Du er fengselsbetjent og tar imot en ny innsatt.",
+      "situation": "Du er fengselsbetjent og tar imot en ny innsatt som skal sone en dom.",
+      "other": "Motspilleren er den nye innsatte.",
+      "goal": "Forklar reglene kort og tydelig.",
+      "style": "Vær streng, saklig og uimponert. Ikke si ordene fengsel eller celle."
+    }
+  },
+  "lines": [
+    {
+      "role": "A",
+      "text": "Hei! Jeg skal være her en uke. Jeg har gledet meg lenge."
+    },
+    {
+      "role": "B",
+      "text": "Gledet deg? Det hører jeg ikke ofte. Legg telefon og belte her."
+    },
+    {
+      "role": "A",
+      "text": "Å, så deilig å være uten telefon. Er det utsikt fra rommet?"
+    },
+    {
+      "role": "B",
+      "text": "Det er et vindu. Det får holde."
+    },
+    {
+      "role": "A",
+      "text": "Helt greit. Når er frokosten?"
+    },
+    {
+      "role": "B",
+      "text": "Klokka sju. Den blir levert gjennom luka."
+    },
+    {
+      "role": "A",
+      "text": "Servering på rommet hver dag? Dere tenker på alt."
+    },
+    {
+      "role": "B",
+      "text": "Du får én time ute i gården daglig."
+    },
+    {
+      "role": "A",
+      "text": "Bare én time? Jeg hadde tenkt å gå noen turer i området."
+    },
+    {
+      "role": "B",
+      "text": "Det ville jeg ikke prøvd på."
+    },
+    {
+      "role": "A",
+      "text": "Jaja. Kan jeg forlenge oppholdet hvis jeg trives?"
+    },
+    {
+      "role": "B",
+      "text": "Det pleier å ordne seg helt av seg selv."
+    }
+  ],
+  "guesses": {
+    "A": {
+      "options": [
+        {
+          "id": "a1",
+          "text": "En gjest sjekker inn på et hotell"
+        },
+        {
+          "id": "a2",
+          "text": "En pasient legges inn på et sykehus"
+        },
+        {
+          "id": "a3",
+          "text": "En elev flytter inn på en internatskole"
+        },
+        {
+          "id": "a4",
+          "text": "En deltaker møter opp på et stille retreat"
+        }
+      ],
+      "correct": "a1"
+    },
+    "B": {
+      "options": [
+        {
+          "id": "b1",
+          "text": "En fengselsbetjent tar imot en ny innsatt"
+        },
+        {
+          "id": "b2",
+          "text": "En offiser tar imot en ny rekrutt"
+        },
+        {
+          "id": "b3",
+          "text": "En sykepleier tar imot en pasient på isolat"
+        },
+        {
+          "id": "b4",
+          "text": "En vekter slipper en besøkende inn på et museum"
+        }
+      ],
+      "correct": "b1"
+    }
+  }
+}
